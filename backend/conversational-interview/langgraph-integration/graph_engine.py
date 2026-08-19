@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv() 
 import os
 from typing import TypedDict, List, Dict, Any
 from pydantic import BaseModel, Field
