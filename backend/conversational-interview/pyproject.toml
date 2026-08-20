@@ -15,5 +15,7 @@ dependencies = [
     "python-dotenv",
     "rich",
     "fastapi",
-    "uvicorn"
+    "uvicorn",
+    "pypdf2",
+    "python-multipart"
 ]

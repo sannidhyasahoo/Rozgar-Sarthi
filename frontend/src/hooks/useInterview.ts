@@ -75,7 +75,7 @@ export function useInterview() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startInterview = useCallback(async () => {
+  const startInterview = useCallback(async (profile?: any) => {
     if (!vapiRef.current) {
       setErrorMessage("Vapi SDK not initialized. Check your NEXT_PUBLIC_VAPI_PUBLIC_KEY.");
       return;
@@ -91,11 +91,30 @@ export function useInterview() {
     setErrorMessage(null);
     setAiStatus('idle');
     
+    let assistantOverrides = {};
+    if (profile && profile.name) {
+      const firstName = profile.name.split(' ')[0];
+      const targetRole = profile.targetRole || 'Backend Engineer';
+      
+      let context = 'software engineering';
+      if (profile.experience && profile.experience.length > 0) {
+        context = profile.experience[0].company;
+      } else if (profile.projects && profile.projects.length > 0) {
+        context = profile.projects[0];
+      }
+      
+      const dynamicGreeting = `Hi ${firstName}, I'm your interviewer for the ${targetRole} position. To start off, could you tell me about your ${context} experience?`;
+      assistantOverrides = {
+        firstMessage: dynamicGreeting
+      };
+      console.log("[Vapi] Using dynamic greeting:", dynamicGreeting);
+    }
+    
     console.log("[Vapi] Starting call with assistant:", assistantId);
 
     try {
       // The Vapi SDK can reject with `undefined` — we must handle that gracefully
-      const call = await vapiRef.current.start(assistantId);
+      const call = await vapiRef.current.start(assistantId, assistantOverrides);
       console.log("[Vapi] Call object returned:", call);
       if (call && call.id) {
         setActiveCallId(call.id);

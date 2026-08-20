@@ -28,10 +28,18 @@ def get_planner_llm() -> BaseChatModel:
             temperature=0.7
         )
     elif settings.LLM_PROVIDER == "groq":
-        return ChatGroq(
+        primary_llm = ChatGroq(
             model=settings.PLANNER_MODEL,
             api_key=settings.GROQ_API_KEY,
             temperature=0.7
         )
+        if settings.GROQ_API_KEY_2:
+            fallback_llm = ChatGroq(
+                model=settings.PLANNER_MODEL,
+                api_key=settings.GROQ_API_KEY_2,
+                temperature=0.7
+            )
+            return primary_llm.with_fallbacks([fallback_llm])
+        return primary_llm
     else:
         raise ValueError(f"Unsupported LLM_PROVIDER: {settings.LLM_PROVIDER}")

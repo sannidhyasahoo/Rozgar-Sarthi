@@ -2,13 +2,14 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useAppAuth } from "@/components/auth/AuthProvider";
-import { Cpu, Terminal, ShieldCheck, BarChart3, UserCheck, ArrowRight } from "lucide-react";
+import { Cpu, Terminal, ShieldCheck, BarChart3, UserCheck, ArrowRight, LogOut } from "lucide-react";
 
 export function Navbar() {
   const pathname = usePathname();
-  const { isSignedIn, profile } = useAppAuth();
+  const router = useRouter();
+  const { isSignedIn, profile, signOutMock } = useAppAuth();
 
   const isInterviewActive = pathname === "/interview";
 
@@ -99,6 +100,18 @@ export function Navbar() {
                 {isInterviewActive ? "View Dashboard" : "Start Interview"}
                 <ArrowRight className="w-4 h-4 stroke-[1.8]" />
               </Link>
+              <button
+                onClick={async () => {
+                  await signOutMock();
+                  router.push("/");
+                }}
+                className="flex items-center gap-2 px-3 py-2 rounded-md text-xs font-mono text-zinc-600 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 transition-colors"
+                title="Clear Data & Start Fresh"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Reset Session</span>
+              </button>
+
             </div>
           ) : (
             <div className="flex items-center gap-2">

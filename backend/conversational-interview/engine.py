@@ -3,12 +3,12 @@ from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
-from models import CompetencyVector, EvidenceEntry, EvaluatorOutput
-from evaluator import run_evaluator
-from planner import run_planner
+from models import CompetencyVector, EvidenceEntry, EvaluatorOutput, UserProfile
+from evaluator_planner import run_evaluator_planner
 
 class InterviewState(TypedDict):
     messages: List[BaseMessage]
+    candidate_profile: Optional[UserProfile]
     competency_state: CompetencyVector
     evidence_graph: List[EvidenceEntry]
     latest_evaluation: Optional[EvaluatorOutput]
@@ -18,32 +18,64 @@ class InterviewState(TypedDict):
     question_history: List[str]
     consecutive_evasions: int
 
-def evaluate_node(state: InterviewState) -> InterviewState:
+def process_turn_node(state: InterviewState) -> InterviewState:
     messages = state["messages"]
+    new_messages = list(messages)
+    new_history = list(state.get("question_history", []))
+    
     if not messages:
-        return state
+        # Turn 0: No messages at all. Provide generic intro.
+        next_question = f"Hi, I'm your interviewer for the {state['target_role']} position. Could you start by telling me about a recent complex project you led?"
+        new_messages.append(AIMessage(content=next_question))
+        new_history.append(next_question)
+        return {
+            "messages": new_messages,
+            "question_history": new_history,
+            "turn_count": state.get("turn_count", 0)
+        }
         
     last_message = messages[-1]
+    
+    # If the last message is NOT a human message (e.g., Turn 0 with dynamic greeting already injected by api.py)
     if not isinstance(last_message, HumanMessage):
-        # We only evaluate human responses
-        return state
+        if new_messages and isinstance(new_messages[-1], AIMessage):
+            next_question = new_messages[-1].content
+            if not new_history:
+                new_history.append(next_question)
+        return {
+            "messages": new_messages,
+            "question_history": new_history,
+            "turn_count": state.get("turn_count", 0)
+        }
 
-    eval_output = run_evaluator(
+    # Extract stripped profile context to save tokens
+    profile_context = None
+    if state.get("candidate_profile"):
+        profile_dict = state["candidate_profile"].model_dump()
+        profile_context = {
+            "experience": profile_dict.get("experience", [])[:1],
+            "projects": profile_dict.get("projects", [])[:2]
+        }
+
+    # Single unified LLM call for both evaluating and planning
+    eval_plan_output = run_evaluator_planner(
         candidate_response=last_message.content,
         target_role=state["target_role"],
-        current_pressure_level=state["current_pressure_level"]
+        current_pressure_level=state["current_pressure_level"],
+        question_history=state.get("question_history", [])[-2:],
+        candidate_profile=profile_context
     )
     
-    # Update competency vector
+    # --- 1. Update Competency Vector ---
     new_comp = CompetencyVector(**state["competency_state"].model_dump())
-    for comp, delta in eval_output.competency_deltas.items():
+    for comp, delta in eval_plan_output.competency_deltas.items():
         if hasattr(new_comp, comp):
             current = getattr(new_comp, comp)
             setattr(new_comp, comp, max(0.0, min(1.0, current + delta)))
             
-    # Append evidence entries
+    # --- 2. Append Evidence Entries ---
     new_evidence = list(state["evidence_graph"])
-    for claim in eval_output.extracted_claims:
+    for claim in eval_plan_output.extracted_claims:
         entry = EvidenceEntry(
             turn_id=state["turn_count"],
             competency=claim.category,
@@ -53,73 +85,36 @@ def evaluate_node(state: InterviewState) -> InterviewState:
         )
         new_evidence.append(entry)
         
-    is_dodging = any(claim.is_dodging_question for claim in eval_output.extracted_claims)
+    is_dodging = any(claim.is_dodging_question for claim in eval_plan_output.extracted_claims)
     consecutive_evasions = state.get("consecutive_evasions", 0)
     if is_dodging:
         consecutive_evasions += 1
     else:
         consecutive_evasions = 0
         
-    return {
-        "latest_evaluation": eval_output,
-        "competency_state": new_comp,
-        "evidence_graph": new_evidence,
-        "current_pressure_level": eval_output.pressure_level_recommended,
-        "consecutive_evasions": consecutive_evasions
-    }
-
-def plan_node(state: InterviewState) -> InterviewState:
-    eval_output = state["latest_evaluation"]
-    
-    if eval_output:
-        planner_output = run_planner(
-            target_role=state["target_role"],
-            pressure_level=state["current_pressure_level"],
-            probe_direction=eval_output.probe_direction,
-            concepts_demonstrated=eval_output.concepts_demonstrated,
-            concepts_missing=eval_output.concepts_missing,
-            claims=[c.model_dump() for c in eval_output.extracted_claims],
-            question_history=state.get("question_history", []),
-            consecutive_evasions=state.get("consecutive_evasions", 0)
-        )
-        next_question = planner_output.next_question
-    else:
-        # First turn, generic intro
-        next_question = f"Hi, I'm your interviewer for the {state['target_role']} position. Could you start by telling me about a recent complex project you led?"
-    
-    new_messages = list(state["messages"])
+    # --- 3. Append Planner output to messages ---
+    next_question = eval_plan_output.next_question
     new_messages.append(AIMessage(content=next_question))
-    
-    new_history = list(state.get("question_history", []))
     new_history.append(next_question)
-    
+
     return {
         "messages": new_messages,
+        "question_history": new_history,
         "turn_count": state["turn_count"] + 1,
-        "latest_evaluation": state["latest_evaluation"], # Keep existing if any
-        "question_history": new_history
+        "competency_state": new_comp,
+        "evidence_graph": new_evidence,
+        "current_pressure_level": eval_plan_output.pressure_level_recommended,
+        "consecutive_evasions": consecutive_evasions,
+        # We store the combined output in latest_evaluation for compatibility
+        "latest_evaluation": eval_plan_output 
     }
 
 def create_interview_engine():
     workflow = StateGraph(InterviewState)
+    workflow.add_node("process_turn", process_turn_node)
     
-    workflow.add_node("evaluate", evaluate_node)
-    workflow.add_node("plan", plan_node)
-    
-    workflow.add_edge(START, "plan")
-    workflow.add_edge("plan", END)
-    # The evaluation happens when user replies, so realistically the loop is:
-    # User -> evaluate -> plan -> wait for User
-    
-    # Wait, the prompt says START -> evaluate_node -> plan_node -> END.
-    # We will build it so that when invoked with a new human message, it runs evaluate -> plan -> END.
-    workflow = StateGraph(InterviewState)
-    workflow.add_node("evaluate", evaluate_node)
-    workflow.add_node("plan", plan_node)
-    
-    workflow.add_edge(START, "evaluate")
-    workflow.add_edge("evaluate", "plan")
-    workflow.add_edge("plan", END)
+    workflow.add_edge(START, "process_turn")
+    workflow.add_edge("process_turn", END)
     
     memory = MemorySaver()
     return workflow.compile(checkpointer=memory)

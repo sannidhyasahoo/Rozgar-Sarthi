@@ -43,17 +43,42 @@ export default function OnboardingPage() {
     "Data Systems Engineer": <Database className="w-5 h-5 text-saffron stroke-[1.8]" />,
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = async (file: File) => {
     setResumeFile(file);
     setResumeFileName(file.name);
     setParsing(true);
 
-    // Simulate smart resume parsing
-    setTimeout(() => {
-      const parsed = parseResumeMock(file.name);
-      if (parsed.keyClaims) setParsedClaims(parsed.keyClaims);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("http://localhost:8000/api/upload-resume", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await res.json();
+      
+      if (data.status === "success" && data.profile) {
+        // Save the parsed profile experience/projects temporarily so handleComplete can save it
+        setProfile({
+           ...profile,
+           experience: data.profile.experience,
+           projects: data.profile.projects
+        });
+        // We could also set parsed claims here if the backend generated them, 
+        // but since it just parses raw data, we'll use a mocked success list for UI purposes
+        setParsedClaims([
+          `Extracted ${data.profile.experience?.length || 0} roles and ${data.profile.projects?.length || 0} projects`,
+          "Ready for personalized interview kickoff"
+        ]);
+      } else {
+         console.error("Failed to parse resume", data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
       setParsing(false);
-    }, 600);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -76,6 +101,8 @@ export default function OnboardingPage() {
       experienceYears,
       resumeName: resumeFileName || `${name.toLowerCase().replace(" ", "_")}_resume.pdf`,
       skills: baseProfile.focusAreas,
+      experience: profile.experience,
+      projects: profile.projects,
       keyClaims: parsedClaims.length > 0 ? parsedClaims : [
         `Architected resilient ${selectedRole} services with latency SLAs`,
         `Led cross-functional performance and scalability improvements`,
@@ -140,6 +167,7 @@ export default function OnboardingPage() {
                 onChange={(e) => setExperienceYears(Number(e.target.value))}
                 className="w-full px-3 py-2 text-sm rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-iris/20 focus:border-iris transition-colors bg-white"
               >
+                <option value={0}>0-1 Years (Intern / Fresher)</option>
                 <option value={1}>1-2 Years (Associate / Early Career)</option>
                 <option value={3}>3-5 Years (Mid-Level Engineer)</option>
                 <option value={6}>6-8 Years (Senior Engineer)</option>

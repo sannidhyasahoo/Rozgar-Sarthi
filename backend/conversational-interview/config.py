@@ -3,13 +3,14 @@ from pydantic import model_validator
 from typing import Literal
 
 class Settings(BaseSettings):
-    LLM_PROVIDER: Literal["gemini", "groq"] = "gemini"
+    LLM_PROVIDER: Literal["gemini", "groq"] = "groq"
     GEMINI_API_KEY: str = ""
     GROQ_API_KEY: str = ""
+    GROQ_API_KEY_2: str = ""
     
     # Defaults according to spec
-    EVALUATOR_MODEL: str = "gemini-2.5-flash"
-    PLANNER_MODEL: str = "gemini-2.5-flash"
+    EVALUATOR_MODEL: str = "openai/gpt-oss-120b"
+    PLANNER_MODEL: str = "openai/gpt-oss-120b"
     
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 

@@ -1,6 +1,18 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import List, Dict, Optional
 
+class Experience(BaseModel):
+    company: str
+    role: str
+    duration: str
+    key_achievements: List[str]
+
+class UserProfile(BaseModel):
+    name: str
+    skills: List[str]
+    experience: List[Experience]
+    projects: List[str]
+
 class Claim(BaseModel):
     claim_text: str
     category: str
@@ -44,3 +56,13 @@ class PlannerOutput(BaseModel):
     next_question: str
     targeted_competency: str
     rationale: str
+
+class EvaluatorPlannerOutput(BaseModel):
+    # Evaluator fields
+    extracted_claims: List[Claim]
+    competency_deltas: Dict[str, float]
+    pressure_level_recommended: int = Field(ge=1, le=5)
+    probe_direction: str
+    
+    # Planner fields
+    next_question: str

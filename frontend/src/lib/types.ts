@@ -25,6 +25,8 @@ export interface CandidateProfile {
   experienceYears: number;
   resumeName?: string;
   resumeSummary?: string;
+  experience?: any[];
+  projects?: string[];
   skills: string[];
   keyClaims: string[];
   competencies: CompetencyVector;

@@ -201,3 +201,28 @@ async function simulateOnboardAdaptiveTurn(
     newEvidenceItem: evaluated.evidenceItem,
   };
 }
+
+export async function uploadResume(file: File, userId: string = "default-user") {
+  const formData = new FormData();
+  formData.append("file", file);
+  // Ideally userId would be passed or we'd rely on cookies/headers
+  // formData.append("userId", userId);
+
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/upload-resume`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload resume: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error uploading resume:", error);
+    throw error;
+  }
+}
+

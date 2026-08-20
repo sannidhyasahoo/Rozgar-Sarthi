@@ -64,7 +64,7 @@ export default function DiagnosticReportPage() {
             Candidate Diagnostic Assessment
           </h1>
           <p className="text-sm text-zinc-600 max-w-xl leading-relaxed">
-            Candidate: <span className="font-semibold text-zinc-800">{session.candidate_name || profile.name}</span> • Track: <span className="font-semibold text-zinc-800">{session.target_role || profile.targetRole}</span> • Generated: {new Date(session.last_updated).toLocaleString()}
+            Candidate: <span className="font-semibold text-zinc-800">{session.candidate_name || profile.name}</span> • Track: <span className="font-semibold text-zinc-800">{session.target_role || profile.targetRole}</span> • Generated: <span suppressHydrationWarning>{new Date(session.last_updated).toLocaleString()}</span>
           </p>
         </div>
 

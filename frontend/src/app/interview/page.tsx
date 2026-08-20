@@ -72,7 +72,7 @@ export default function VoiceInterviewPage() {
                             ? 'bg-emerald-500 shadow-emerald-500/50 scale-105'
                             : 'bg-zinc-800 shadow-zinc-800/20 scale-100 hover:bg-zinc-700'
             }`}
-            onClick={isCallActive ? endInterview : startInterview}
+            onClick={isCallActive ? endInterview : () => startInterview(profile)}
             >
                 {aiStatus === 'error' ? (
                     <AlertTriangle className="w-8 h-8 text-white" />
@@ -94,7 +94,7 @@ export default function VoiceInterviewPage() {
                     <p className="text-xs font-mono text-red-500 uppercase tracking-widest mb-2 font-semibold">Error</p>
                     <p className="text-sm text-red-600 font-medium leading-relaxed bg-red-50 border border-red-200 rounded-xl px-4 py-3">{errorMessage}</p>
                     <button 
-                      onClick={startInterview}
+                      onClick={() => startInterview(profile)}
                       className="mt-4 px-4 py-2 bg-iris text-white rounded-xl text-sm font-semibold hover:bg-iris/90 transition-colors"
                     >
                       Try Again

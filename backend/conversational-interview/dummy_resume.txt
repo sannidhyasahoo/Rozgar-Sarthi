@@ -1,0 +1,3 @@
+Alex Mercer
+Backend Engineer at Acme Corp from 2020-2023. I built APIs in Python.
+Before that, I was an Intern at Stark Industries.

@@ -68,7 +68,17 @@ export function MockAuthProvider({ children }: { children: React.ReactNode }) {
     setIsSignedIn(true);
   };
 
-  const signOutMock = () => {
+  const signOutMock = async () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("rozgar_profile");
+      // Also notify backend to delete mock profile and clear state
+      try {
+        await fetch("http://localhost:8000/api/reset", { method: "POST" });
+      } catch (e) {
+        console.error("Failed to reset backend state", e);
+      }
+    }
+    setProfileState(DEFAULT_PROFILE);
     setIsSignedIn(false);
     setUser(null);
   };

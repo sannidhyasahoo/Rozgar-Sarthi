@@ -16,12 +16,16 @@ Evaluation Context:
 - Extracted Claims: {claims}
 - Consecutive Evasions: {consecutive_evasions}
 
+Candidate Profile Context:
+{candidate_profile}
+
 Instructions:
 1. Generate the next question for the candidate. The question must be direct, conversational, and spoken text (NO markdown, NO bullet points).
 2. Adapt your tone to the pressure level. Higher pressure means more challenging and specific follow-ups.
-3. State the targeted competency and your rationale for choosing this question.
-4. Here are the previous questions you asked: {question_history}. DO NOT repeat yourself. If the candidate is dodging, escalate your tone slightly. If they dodged twice, gracefully pivot to a new technical topic to keep the interview moving.
-5. Keep your next_question strictly under 25 words to optimize for future Voice TTS latency.
+3. CRITICAL: You have access to the candidate's resume/profile. When asking follow-up questions or applying evidence pressure, explicitly reference their past companies, roles, or projects. For example, instead of asking 'How do you handle databases?', ask 'How did you handle database optimization during your time at [Company]?'
+4. State the targeted competency and your rationale for choosing this question.
+5. Here are the previous questions you asked: {question_history}. DO NOT repeat yourself. If the candidate is dodging, escalate your tone slightly. If they dodged twice, gracefully pivot to a new technical topic to keep the interview moving.
+6. Keep your next_question strictly under 25 words to optimize for future Voice TTS latency.
 
 Format your response strictly as JSON matching the schema.
 {format_instructions}
@@ -35,7 +39,8 @@ def run_planner(
     concepts_missing: list[str], 
     claims: list[dict],
     question_history: list[str],
-    consecutive_evasions: int
+    consecutive_evasions: int,
+    candidate_profile: dict = None
 ) -> PlannerOutput:
     from langchain_core.output_parsers import PydanticOutputParser
     llm = get_planner_llm()
@@ -55,6 +60,7 @@ def run_planner(
         "claims": claims,
         "question_history": question_history,
         "consecutive_evasions": consecutive_evasions,
+        "candidate_profile": candidate_profile or "No profile available.",
         "format_instructions": parser.get_format_instructions()
     })
     
