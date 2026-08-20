@@ -15,5 +15,6 @@ dependencies = [
     "python-dotenv",
     "rich",
     "fastapi",
-    "uvicorn"
+    "uvicorn",
+    "reportlab>=5.0.0",
 ]

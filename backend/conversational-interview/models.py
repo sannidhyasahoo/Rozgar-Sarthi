@@ -44,3 +44,29 @@ class PlannerOutput(BaseModel):
     next_question: str
     targeted_competency: str
     rationale: str
+
+class FeedbackCard(BaseModel):
+    category: str  # e.g., "Role Alignment & Intentionality", "STAR Framework", "Tech Stack & Ownership", "Technical Trade-offs", "Debugging & Troubleshooting", "Culture Fit & Growth"
+    actionable_recommendation: str  # Bold prescriptive advice with concrete examples/metrics
+    observed_diagnosis: str  # Contextual breakdown of candidate's response vs expected bar
+
+class ClaimAuditEntry(BaseModel):
+    claim_text: str
+    category: str
+    status: str  # "Substantiated" | "Unsubstantiated"
+    is_quantified: bool
+    missing_details: List[str]
+
+class FullInterviewReport(BaseModel):
+    session_id: str
+    target_role: str
+    hiring_recommendation: str  # "Strong Hire" | "Hire" | "Needs Work" | "No Hire"
+    executive_summary: str
+    competencies: Dict[str, float]
+    verified_strengths: List[str]
+    critical_risks: List[str]
+    feedback_cards: List[FeedbackCard]
+    claim_audit: List[ClaimAuditEntry]
+    demonstrated_concepts: List[str]
+    missing_concepts: List[str]
+    study_roadmap: List[str]

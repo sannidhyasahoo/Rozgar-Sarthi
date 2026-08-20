@@ -2,70 +2,38 @@ import json
 import os
 import asyncio
 from datetime import datetime
-from langchain_core.prompts import ChatPromptTemplate
-from llm_factory import get_planner_llm
+from report_generator import generate_agentic_report
+from pdf_generator import compile_report_pdf
 
-TIPS_PROMPT = """
-Based on the following missing concepts or weaknesses from an interview, provide 1-2 actionable tips for the candidate. Keep them brief.
-
-Missing Concepts: {missing_concepts}
-Weaknesses: {weaknesses}
-
-Return ONLY a JSON array of strings. Example: ["Tip 1", "Tip 2"]
-"""
+def finalize_interview_report(call_id: str, state: dict) -> str:
+    """
+    Synchronous / End-of-call handler:
+    1. Generates Agentic FullInterviewReport.
+    2. Saves JSON representation to reports/{call_id}_report.json.
+    3. Compiles PDF to reports/{call_id}_report.pdf.
+    Returns path to the compiled PDF file.
+    """
+    reports_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "reports"))
+    os.makedirs(reports_dir, exist_ok=True)
+    
+    pdf_path = os.path.join(reports_dir, f"{call_id}_report.pdf")
+    json_path = os.path.join(reports_dir, f"{call_id}_report.json")
+    
+    # 1. Synthesize Agentic Report
+    report_obj = generate_agentic_report(state, session_id=call_id)
+    
+    # 2. Save JSON report
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(report_obj.model_dump(), f, indent=4)
+        
+    # 3. Compile PDF
+    compile_report_pdf(report_obj, pdf_path)
+    return pdf_path
 
 async def save_session_insights(call_id: str, state: dict):
-    # Ensure directory exists
-    os.makedirs(os.path.join(os.path.dirname(__file__), "..", "reports"), exist_ok=True)
-    file_path = os.path.join(os.path.dirname(__file__), "..", "reports", f"{call_id}_insights.json")
-    
-    comp_state = state.get("competency_state")
-    competencies = comp_state.model_dump() if comp_state else {}
-    
-    evidence_graph = state.get("evidence_graph", [])
-    evidence_log = []
-    strengths = []
-    weaknesses = []
-    
-    for entry in evidence_graph:
-        e_dict = entry.model_dump() if hasattr(entry, "model_dump") else entry
-        evidence_log.append(e_dict)
-        
-        if e_dict.get("signal") == "positive":
-            strengths.append(f"Demonstrated in {e_dict.get('competency')}: {e_dict.get('quote')}")
-        elif e_dict.get("signal") in ["negative", "unsubstantiated"]:
-            weaknesses.append(f"Lacked evidence in {e_dict.get('competency')}: {e_dict.get('quote')}")
-
-    latest_eval = state.get("latest_evaluation")
-    missing_concepts = latest_eval.concepts_missing if latest_eval else []
-    
-    tips = []
-    if missing_concepts or weaknesses:
-        llm = get_planner_llm()
-        prompt = ChatPromptTemplate.from_template(TIPS_PROMPT)
-        # For background tasks, we can use invoke synchronously or ainvoke
-        try:
-            # simple json extraction
-            response = await (prompt | llm).ainvoke({
-                "missing_concepts": ", ".join(missing_concepts),
-                "weaknesses": " | ".join(weaknesses[:3]) # Send top 3
-            })
-            content = response.content.strip()
-            if content.startswith("```json"):
-                content = content[7:-3].strip()
-            tips = json.loads(content)
-        except Exception as e:
-            tips = ["Always quantify your performance claims with baseline metrics."]
-
-    insight_data = {
-        "session_id": call_id,
-        "last_updated": datetime.utcnow().isoformat() + "Z",
-        "competencies": competencies,
-        "evidence_log": evidence_log,
-        "identified_strengths": strengths,
-        "areas_for_improvement": weaknesses,
-        "actionable_tips": tips
-    }
-    
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(insight_data, f, indent=4)
+    """Async background wrapper for api.py streaming response closure."""
+    try:
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, finalize_interview_report, call_id, state)
+    except Exception as e:
+        print(f"Error saving session insights: {e}")

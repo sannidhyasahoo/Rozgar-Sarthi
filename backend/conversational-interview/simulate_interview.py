@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, AIMessage
 from models import CompetencyVector
 from engine import create_interview_engine
+from insight_logger import finalize_interview_report
 
 load_dotenv()
 
@@ -50,8 +51,8 @@ def print_telemetry(state):
                     console.print(f"  Missing: {', '.join(c.missing_details)}")
 
 def main():
-    if not os.getenv("GEMINI_API_KEY") and not os.getenv("GROQ_API_KEY"):
-        console.print("[bold red]Error: You must set GEMINI_API_KEY or GROQ_API_KEY in .env[/bold red]")
+    if not os.getenv("GEMINI_API_KEY") and not os.getenv("GOOGLE_API_KEY") and not os.getenv("GROQ_API_KEY"):
+        console.print("[bold red]Error: You must set GEMINI_API_KEY, GOOGLE_API_KEY, or GROQ_API_KEY in .env[/bold red]")
         sys.exit(1)
 
     console.print(Panel.fit("Welcome to Rozgar Sarthi Interview Simulation", style="bold green"))
@@ -82,8 +83,8 @@ def main():
         
         # Get User Input
         try:
-            user_input = console.input("\n[bold yellow]Candidate (You):[/bold yellow] ")
-            if user_input.lower() in ["exit", "quit"]:
+            user_input = console.input("\n[bold yellow]Candidate (You):[/bold yellow] (Type 'exit' to end call and get PDF report)\n> ")
+            if user_input.strip().lower() in ["exit", "quit"]:
                 break
         except (KeyboardInterrupt, EOFError):
             break
@@ -94,6 +95,16 @@ def main():
             state = engine.invoke(state, config)
             
         print_telemetry(state)
+
+    # End of Call Handler
+    console.print("\n[bold cyan]📞 Ending Interview Call... Synthesizing Agentic Report & PDF...[/bold cyan]")
+    with console.status("[bold green]Compiling PDF Report...[/bold green]"):
+        try:
+            pdf_path = finalize_interview_report("cli-session", state)
+            console.print(f"\n[bold green]✅ Interview Report PDF Generated Successfully![/bold green]")
+            console.print(f"[bold yellow]📄 PDF File Location:[/bold yellow] {pdf_path}\n")
+        except Exception as e:
+            console.print(f"[bold red]Error generating PDF report: {e}[/bold red]")
 
 if __name__ == "__main__":
     main()
