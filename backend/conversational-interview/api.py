@@ -94,3 +94,14 @@ async def chat_completions(request: Request):
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+import os
+from fastapi import HTTPException
+
+@app.get("/api/report/{call_id}")
+async def get_report(call_id: str):
+    file_path = os.path.join(os.path.dirname(__file__), "..", "reports", f"{call_id}_insights.json")
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Report generating or not found")
+    with open(file_path, "r") as f:
+        return json.load(f)
