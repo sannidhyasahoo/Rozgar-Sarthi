@@ -1,0 +1,21 @@
+[project]
+name = "conversational-interview"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph",
+    "langchain",
+    "langchain-core",
+    "langchain-google-genai",
+    "langchain-groq",
+    "pydantic",
+    "pydantic-settings",
+    "python-dotenv",
+    "rich",
+    "fastapi",
+    "uvicorn",
+    "pypdf2",
+    "python-multipart"
+]
