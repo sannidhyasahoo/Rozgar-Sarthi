@@ -9,19 +9,18 @@
     "React.js",
     "HTML5",
     "CSS3",
-    "TailwindCSS",
+    "Tailwind CSS",
     "Node.js",
     "Express.js",
     "Flask",
     "FastAPI",
     "MongoDB",
     "PostgreSQL",
+    "ChromaDB",
     "PyTorch",
     "NumPy",
     "Pandas",
-    "Scikit-Learn",
-    "LLM APIs",
-    "Google ADK",
+    "LangGraph",
     "Git",
     "GitHub",
     "Docker",
@@ -32,21 +31,30 @@
   ],
   "experience": [
     {
+      "company": "Samsung R&D Institute India",
+      "role": "AI/ML Intern",
+      "duration": "Jun 2026–Present",
+      "key_achievements": [
+        "Engineered a type-specific Document AI/OCR extraction framework for noisy mobile-captured documents, supporting structured field extraction across 9 document categories.",
+        "Built a RapidOCR processing path with EXIF-aware coordinate correction, confidence-gated recovery for rotated text, and category-conditioned routing into LiLT and NuNER-v2-based extractors with deterministic validation.",
+        "Achieved 87.1% macro-F1 and 86.1% micro-F1 on unseen-vendor documents versus 44.2% macro-F1 for the strongest evaluated zero-shot baseline, with 178 ms CPU inference latency."
+      ]
+    },
+    {
       "company": "Aspire Fintech",
       "role": "Full Stack Intern",
-      "duration": "Jan 2026 – Mar 2026",
+      "duration": "Jan 2026–Mar 2026",
       "key_achievements": [
-        "Led end-to-end backend architecture and deployment of NilEasy, a GST NIL return filing platform, building the complete backend infrastructure using FastAPI.",
-        "Engineered scalable REST APIs, workflow automation systems, and chatbot integrations, enabling businesses to complete GST filings in under 5 taps instead of navigating multiple forms and 30+ minutes of manual effort.",
-        "Reduced average GST filing time from 30+ minutes to under 2 minutes through conversational automation.",
-        "Integrated WhatsApp and Telegram Business APIs to deliver a conversational filing experience, processing 200+ GST filings and serving 250+ users within the first 1.5 months of launch.",
-        "Collaborated directly with founders on product strategy, onboarding workflows, and user analytics to drive adoption and guide feature development."
+        "Led the end-to-end backend architecture and deployment of NilEasy, building the core backend infrastructure and REST APIs with FastAPI.",
+        "Engineered workflow automation and chatbot integrations that reduced GST filing time from 30+ minutes to under 2 minutes.",
+        "Integrated WhatsApp and Telegram Business APIs, enabling 200+ GST filings and 250+ users within the first 1.5 months of launch.",
+        "Designed onboarding workflows and product analytics with the founding team, using user feedback and usage data to guide feature development."
       ]
     }
   ],
   "projects": [
-    "IDHard – privacy-preserving digital identity platform using Zero-Knowledge Proofs, SD-JWTs, and Polygon",
-    "CompliBot – AI-powered GST filing assistant on WhatsApp/Telegram with OCR and AI",
-    "Blockchain Land Registry – decentralized land registry DApp on Ethereum/Polygon"
+    "CompliBot – AI-powered GST filing assistant for WhatsApp and Telegram using OCR and AI to extract invoice data and file GST/NIL returns; eliminated third‑party API costs and reduced filing expenses.",
+    "IDHard – Designed a reusable KYC flow with Verifiable Credentials, SD‑JWTs, and Zero‑Knowledge Proofs; implemented verifier‑side cryptographic checks backed by Merkle Trees and Polygon, replacing document exchange with proof‑based credential verification.",
+    "Rozgar Sarthi – Built an adaptive interview engine using LangGraph, FastAPI, and Next.js that maintains candidate competency state, extracts evidence, detects inconsistencies, and dynamically selects follow‑up questions to assess technical, behavioral, and problem‑solving skills."
   ]
 }

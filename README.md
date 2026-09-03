@@ -1,861 +1,408 @@
-# Adaptive Interview Intelligence Engine
+<p align="center">
+  <h1 align="center">रोज़गार सारथी &nbsp;·&nbsp; Rozgar Sarthi</h1>
+  <p align="center"><strong>Your AI-Powered Career Navigator</strong></p>
+  <p align="center">
+    An adaptive interview intelligence engine that continuously evaluates candidate competency,<br/>
+    builds evidence, and selects the next question based on what it still needs to learn.
+  </p>
+</p>
 
-> **An AI-powered adaptive interview system that continuously evaluates candidate competency, builds evidence, and selects the next question based on what it still needs to learn.**
-
-[![Status](https://img.shields.io/badge/status-development-orange)]()
-[![Backend](https://img.shields.io/badge/backend-FastAPI-009688)]()
-[![Frontend](https://img.shields.io/badge/frontend-Next.js-black)]()
-[![AI](https://img.shields.io/badge/AI-LangGraph-purple)]()
-[![Database](https://img.shields.io/badge/database-PostgreSQL-blue)]()
-
----
-
-## 🚀 What is this?
-
-Most AI interview platforms generate questions, evaluate answers, and move on.
-
-**Adaptive Interview Intelligence Engine works differently.**
-
-It maintains a continuously updated model of the candidate and uses every response as evidence to decide what should happen next.
-
-```text
-Candidate Response
-       ↓
-    Evaluate
-       ↓
-Extract Evidence & Claims
-       ↓
-Update Candidate State
-       ↓
-Identify Weakness / Uncertainty
-       ↓
-Select Best Next Probe
-       ↓
-Pressure Test
-       ↓
-Candidate Response
-       ↺
-```
-
-The goal is not simply to determine **whether an answer is correct**.
-
-The system attempts to understand:
-
-* What the candidate actually knows
-* How they reason
-* How independently they solve problems
-* How well they communicate
-* Whether their claims are supported by evidence
-* How they perform under increasing interview pressure
-* Which competencies remain uncertain
-* How their performance changes across interviews
-
-This makes the system an **adaptive assessment engine rather than an AI chatbot**.
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/status-stable-brightgreen?style=for-the-badge" alt="Status"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/frontend-Next.js_15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/AI-LangGraph-7C3AED?style=for-the-badge" alt="LangGraph"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/voice-Vapi-FF6B35?style=for-the-badge" alt="Vapi"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/auth-Clerk-6C47FF?style=for-the-badge&logo=clerk&logoColor=white" alt="Clerk"/></a>
+  <a href="#"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="License"/></a>
+</p>
 
 ---
 
-# 🎯 Core Differentiation
+## The Problem
 
-The project is built around seven major ideas.
+Most AI interview platforms generate questions, evaluate answers, and move on — treating every candidate the same way.
 
-### 1. Candidate State
+**Rozgar Sarthi works differently.**
 
-Instead of assigning one overall score, the system maintains a competency model for the candidate.
+It maintains a continuously updated competency model of the candidate and uses every response as evidence to decide what should happen next — just like a skilled human interviewer would.
 
-```json
-{
-  "technical": {
-    "dsa": 0.82,
-    "dbms": 0.54,
-    "os": 0.71,
-    "system_design": 0.63
-  },
-  "problem_solving": {
-    "approach_selection": 0.86,
-    "edge_cases": 0.51,
-    "debugging": 0.84
-  },
-  "behavioral": {
-    "ownership": 0.88,
-    "leadership": 0.67,
-    "communication": 0.76
-  }
-}
+```
+Candidate Response → Evaluate → Extract Evidence & Claims → Update Candidate Model
+         ↓
+Identify Weakness / Uncertainty → Select Best Next Probe → Pressure Test → Repeat
 ```
 
-Every meaningful interaction updates this state.
+> The goal is not to determine **whether an answer is correct**. The system attempts to understand what the candidate actually knows, how they reason, and whether their claims are supported by evidence.
 
-### 2. Evidence Graph
+---
 
-Every major assessment is backed by evidence.
+## ✨ Key Features
 
-Instead of:
+### 🎙️ Voice-First Adaptive Interview
+Real-time voice interviews powered by **Vapi** with sub-second latency. The AI interviewer adapts its questioning strategy in real-time based on detected competency gaps.
 
-```text
-Communication = 63
+### 📊 5-Axis Competency Scoring
+Every candidate is evaluated across five dimensions — updated after every response:
+
+| Axis | What It Measures |
+|------|-----------------|
+| 🛠️ Technical Depth | Domain knowledge, concepts, and first-principles understanding |
+| 🏗️ System Design | Architectural thinking, trade-off analysis, scalability awareness |
+| 🧩 Problem Solving | Approach selection, edge-case handling, debugging methodology |
+| 🗣️ Communication | Clarity, structure, and ability to explain complex ideas concisely |
+| 🎯 Ownership | Specificity of contributions, quantified impact, evidence quality |
+
+### 🔍 Evidence Graph & Claim Extraction
+Every assessment is backed by traceable evidence. The system extracts specific claims from responses, tags them as substantiated or unsubstantiated, and identifies missing details — making the evaluation transparent and explainable.
+
+### ⚡ Adaptive Pressure System
+Interview pressure escalates intelligently across 5 levels:
+
 ```
-
-the system can explain:
-
-```text
-Communication
- ├── Question 3
- │    └── Clear explanation
- │
- ├── Question 7
- │    └── Long unstructured response
- │
- └── Question 11
-      └── Strong follow-up response
-```
-
-This allows the final report to answer:
-
-> **Why did I receive this score?**
-
-### 3. Evidence Pressure
-
-When candidates make quantified or significant claims, the system can probe them.
-
-Example:
-
-> "I improved API performance by 40%."
-
-The interviewer may follow with:
-
-> "What was the baseline?"
-
-Then:
-
-> "What was the latency after your change?"
-
-Then:
-
-> "How did you measure it?"
-
-The system evaluates the **specificity, evidence, and consistency** of the claim rather than attempting to determine whether the candidate is lying.
-
-### 4. Reasoning Trajectory
-
-For coding interviews, the system records the candidate's process rather than only looking at the final code.
-
-```text
-Problem
-   ↓
-Initial Approach
-   ↓
-Complexity Analysis
-   ↓
-Alternative Approach
-   ↓
-Implementation
-   ↓
-Test Failure
-   ↓
-Debugging
-   ↓
-Final Solution
-```
-
-This distinguishes candidates who independently reasoned their way to a solution from candidates who reached the same result with significant assistance.
-
-### 5. Cross-Answer Consistency
-
-Claims made throughout the interview are compared.
-
-If a candidate initially claims:
-
-> "I designed the backend architecture."
-
-and later says:
-
-> "My teammate handled most of the backend."
-
-the system identifies a **potential inconsistency** and asks for clarification.
-
-It does not label the candidate a liar.
-
-### 6. Adaptive Pressure
-
-Interview pressure increases based on candidate responses.
-
-```text
 Level 1 → Normal Question
-     ↓
 Level 2 → Clarification
-     ↓
 Level 3 → Evidence Request
-     ↓
 Level 4 → Challenge Assumption
-     ↓
 Level 5 → Counterexample / Edge Case
 ```
 
-### 7. Longitudinal Diagnosis
+Candidates who make quantified claims (e.g., *"I improved API performance by 40%"*) are probed for baselines, methodology, and measurement — evaluating specificity, not truthfulness.
 
-Previous interviews become part of the candidate model.
+### 💻 Integrated Coding Assessment
+Built-in code editor powered by **Monaco Editor** with LLM-based evaluation. The system assesses code correctness, efficiency, and provides constructive feedback without revealing solutions.
 
-The system can identify:
+### 📋 AI-Generated Diagnostic Reports
+Post-interview, the system generates a comprehensive 4-page diagnostic report including:
+- Executive summary with hiring calibration badge
+- Actionable coaching feedback (startup feedback style)
+- Evidence graph & buzzword audit with claims substantiation
+- Personalized study roadmap with recommended next steps
 
-* Improving skills
-* Persistent weaknesses
-* Regressions
-* Interview-specific weaknesses
+### 📄 Resume-Aware Interviewing
+Upload a resume and the AI tailors questions to the candidate's background — referencing their past companies, roles, and projects for deeper, more relevant probing.
 
-Future interviews can then focus on areas that remain uncertain or weak.
+### 🔐 Authentication & User Management
+Secure authentication via **Clerk** with sign-in/sign-up flows, session management, and user-scoped data isolation.
 
 ---
 
-# 🧩 Interview Modes
+## 🏗️ Architecture
 
-## Behavioral Interviews
-
-Evaluates:
-
-* Communication
-* Ownership
-* Leadership
-* Teamwork
-* Conflict resolution
-* Decision making
-* Adaptability
-* Failure handling
-* Initiative
-* Impact
-* Self-awareness
-
-Behavioral interviews use **STAR** as a primary framework:
-
-```text
-Situation
-   ↓
-Task
-   ↓
-Action
-   ↓
-Result
+```
+                         ┌──────────────────────────┐
+                         │        Frontend           │
+                         │   Next.js 15 · React 19   │
+                         │   Tailwind · Monaco        │
+                         └────────────┬───────────────┘
+                                      │
+                              REST / Streaming SSE
+                                      │
+                         ┌────────────▼───────────────┐
+                         │       FastAPI Backend       │
+                         │   Chat · Coding · Reports   │
+                         └────────────┬───────────────┘
+                                      │
+                         ┌────────────▼───────────────┐
+                         │   Interview Orchestrator    │
+                         │        LangGraph            │
+                         └────────────┬───────────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    │                 │                 │
+                    ▼                 ▼                 ▼
+            Interviewer        Evaluator           Planner
+               Agent            Engine              Engine
+                    │                 │                 │
+                    └─────────────────┼─────────────────┘
+                                      │
+                         ┌────────────▼───────────────┐
+                         │    Candidate State +        │
+                         │    Evidence Graph            │
+                         └────────────────────────────┘
 ```
 
-The system can continue probing an answer to test ownership, specificity, reasoning, impact, and consistency.
+### AI Pipeline (Single-Pass Architecture)
 
----
+The system uses a **unified evaluator-planner** that performs evaluation and question planning in a single LLM call — minimizing latency for voice interactions:
 
-## Technical Interviews
-
-Role-specific technical assessment.
-
-### Software Engineering
-
-* Data Structures & Algorithms
-* DBMS
-* Operating Systems
-* Computer Networks
-* OOP
-* System Design
-* Programming Fundamentals
-
-### ML Engineering
-
-* Machine Learning
-* Statistics
-* Deep Learning
-* NLP
-* Computer Vision
-* LLMs
-* MLOps
-
-The competency framework is configurable by role.
-
----
-
-## Coding Interviews
-
-The coding engine evaluates:
-
-* Problem understanding
-* Approach selection
-* Algorithm selection
-* Complexity analysis
-* Implementation
-* Correctness
-* Edge cases
-* Debugging
-* Adaptability
-* Communication
-* Hint dependency
-
-The system evaluates the **solution trajectory**, not just whether the final code passes.
-
----
-
-# 🏗️ Architecture
-
-```text
-                         ┌──────────────────────┐
-                         │       Frontend       │
-                         │    Next.js / React   │
-                         └──────────┬───────────┘
-                                    │
-                              REST / WebSocket
-                                    │
-                         ┌──────────▼───────────┐
-                         │       FastAPI        │
-                         │         API          │
-                         └──────────┬───────────┘
-                                    │
-                         ┌──────────▼───────────┐
-                         │ Interview Orchestrator│
-                         │       LangGraph      │
-                         └──────────┬───────────┘
-                                    │
-                  ┌─────────────────┼─────────────────┐
-                  │                 │                 │
-                  ▼                 ▼                 ▼
-             Interviewer       Evaluator          Planner
-                Agent            Engine            Engine
-                  │                 │                 │
-                  └─────────────────┼─────────────────┘
-                                    │
-                         ┌──────────▼───────────┐
-                         │ Candidate State +    │
-                         │ Evidence Graph       │
-                         └──────────┬───────────┘
-                                    │
-                  ┌─────────────────┼─────────────────┐
-                  │                 │                 │
-                  ▼                 ▼                 ▼
-             PostgreSQL          pgvector           Redis
-                  │
-                  ▼
-             Interview History
 ```
-
-### Coding Pipeline
-
-```text
-Candidate Code
-      ↓
-Coding API
-      ↓
-Job Queue
-      ↓
-Execution Worker
-      ↓
-Docker Sandbox
-      ↓
-Test Runner
-      ↓
-Evaluation
-```
-
-Candidate code is **never executed directly on the application server**. The sandbox uses CPU, memory, timeout, network, filesystem, and container-isolation restrictions.
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-* Next.js
-* React
-* TypeScript
-* Tailwind CSS
-* shadcn/ui
-* Monaco Editor
-* React Flow
-* WebSocket
-
-## Backend
-
-* Python
-* FastAPI
-* LangGraph
-* Pydantic
-* SQLAlchemy
-
-## Database & Infrastructure
-
-* PostgreSQL
-* pgvector
-* Redis
-* Docker
-
-## AI
-
-The application uses an LLM abstraction layer so the system is not locked to a single provider.
-
-```text
-              LLM Provider
-                   │
-        ┌──────────┼──────────┐
-        │          │          │
-      Gemini     OpenAI     Claude
-```
-
-Critical LLM operations use structured outputs validated with Pydantic before application state is modified.
-
----
-
-# 🧠 AI Architecture
-
-The system intentionally avoids a huge collection of autonomous agents.
-
-Instead, the core intelligence is divided into three components:
-
-```text
-              Interview Orchestrator
-                       │
-          ┌────────────┼────────────┐
-          │            │            │
-          ▼            ▼            ▼
-     Interviewer    Evaluator    Planner
-        Agent        Engine       Engine
-```
-
-### Interviewer Agent
-
-Responsible for:
-
-* Asking questions
-* Follow-ups
-* Conversation context
-* Interview persona
-* Pressure
-* Clarification
-* Hints when allowed
-
-It does **not** independently determine the final score.
-
-### Evaluation Engine
-
-Analyzes:
-
-```text
-Question
 Candidate Response
-Previous Responses
-Candidate State
-Expected Concepts
-Competency Rubric
-Interview Context
-```
-
-and produces structured evaluation.
-
-### Planner Engine
-
-Determines what question should come next based on:
-
-```text
-Skill Gap
-+
-Relevance
-+
-Difficulty Fit
-+
-Coverage
-```
-
-A future version can extend this into an information-gain based question selection system.
-
----
-
-# 🔍 RAG
-
-RAG is used for domain knowledge rather than deterministic operations.
-
-Potential sources include:
-
-* Interview question bank
-* Technical concepts
-* Competency rubrics
-* Behavioral frameworks
-* Coding problems
-* Role requirements
-
-```text
-Query
-  ↓
-Embedding
-  ↓
-Vector Search
-  ↓
-Relevant Knowledge
-  ↓
-LLM
-  ↓
-Structured Evaluation
-```
-
-Deterministic operations remain deterministic.
-
-For example:
-
-```text
-Code execution       → Deterministic
-Test results         → Deterministic
-Question ranking     → Application logic
-Answer interpretation → LLM
-Competency evaluation → LLM + Rubric
+       ↓
+┌──────────────────────────────┐
+│   Unified Evaluator-Planner  │
+│                              │
+│  1. Extract Claims           │
+│  2. Compute Competency Δ     │
+│  3. Detect Evasion           │
+│  4. Set Pressure Level       │
+│  5. Generate Next Question   │
+└──────────────────────────────┘
+       ↓
+Structured Output (Pydantic-validated)
+       ↓
+State Update + Stream to Voice
 ```
 
 ---
 
-# 📊 Candidate Model
+## 🛠️ Tech Stack
 
-The system does not reduce a candidate to one number.
+### Frontend
+| Technology | Purpose |
+|-----------|---------|
+| **Next.js 15** | React framework with App Router |
+| **React 19** | UI components |
+| **TypeScript** | Type safety |
+| **Tailwind CSS** | Utility-first styling |
+| **Monaco Editor** | Code editing (VS Code engine) |
+| **Vapi SDK** | Voice AI integration |
+| **Clerk** | Authentication |
+| **Lucide React** | Icon system |
+| **React Markdown** | Report rendering |
 
-A candidate is represented as:
+### Backend
+| Technology | Purpose |
+|-----------|---------|
+| **Python 3.11+** | Runtime |
+| **FastAPI** | API framework with streaming support |
+| **LangGraph** | Stateful AI workflow orchestration |
+| **LangChain** | LLM abstraction layer |
+| **Pydantic** | Data validation & structured outputs |
+| **PyPDF2** | Resume parsing |
+| **Uvicorn** | ASGI server |
 
-```text
-Candidate
-   │
-   ├── Interview History
-   ├── Competency State
-   ├── Evidence
-   ├── Claims
-   ├── Weaknesses
-   ├── Strengths
-   └── Improvement Trends
-```
+### AI / LLM
+| Provider | Usage |
+|----------|-------|
+| **Google Gemini** | Primary LLM (evaluation + planning) |
+| **Groq** | Low-latency inference option |
 
-This allows the system to understand how a candidate changes over time.
-
----
-
-# 📝 Interview Replay
-
-After an interview, candidates can inspect the reasoning behind the assessment.
-
-```text
-Question
-   ↓
-Your Answer
-   ↓
-What the system detected
-   ↓
-Why the follow-up was selected
-   ↓
-Competency being tested
-   ↓
-Your performance
-```
-
-Example:
-
-```text
-Competency:
-Ownership
-
-Detected:
-Strong ownership
-Low specificity
-
-Follow-up:
-"What exactly did you personally implement?"
-
-Reason:
-Ownership evidence was insufficient.
-```
-
-This makes the interview more than a score — it becomes a diagnostic learning experience.
+> The application uses an LLM abstraction layer via LangChain — it is **not locked to a single provider**.
 
 ---
 
-# 🔁 Adaptive Interview Loop
+## 📁 Project Structure
 
-The core algorithm is:
-
-```python
-while interview_active:
-
-    response = get_candidate_response()
-
-    evaluation = evaluate(response)
-
-    claims = extract_claims(response)
-
-    evidence = extract_evidence(response)
-
-    update_candidate_state(
-        evaluation,
-        claims,
-        evidence
-    )
-
-    update_consistency_graph()
-
-    candidates = retrieve_possible_questions()
-
-    ranked_questions = rank_questions(
-        candidates,
-        candidate_state,
-        interview_objectives,
-        time_remaining
-    )
-
-    next_question = select_best_question(
-        ranked_questions
-    )
-
-    ask(next_question)
 ```
-
-This adaptive loop is the **technical core of the project**.
-
----
-
-# 📡 API
-
-Core REST endpoints:
-
-```text
-POST /api/candidates
-
-GET  /api/candidates/{id}
-
-POST /api/interviews
-
-GET  /api/interviews/{id}
-
-POST /api/interviews/{id}/response
-
-POST /api/interviews/{id}/code/run
-
-GET  /api/interviews/{id}/state
-
-GET  /api/interviews/{id}/report
-
-GET  /api/candidates/{id}/history
-
-GET  /api/candidates/{id}/skills
-
-GET  /api/candidates/{id}/evidence
-```
-
-WebSocket:
-
-```text
-/ws/interview/{session_id}
+Rozgar Sarthi/
+├── frontend/                          # Next.js 15 Application
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── page.tsx               # Landing page
+│   │   │   ├── layout.tsx             # Root layout with Clerk
+│   │   │   ├── interview/             # Voice interview interface
+│   │   │   ├── coding/                # Code editor + assessment
+│   │   │   ├── dashboard/             # User dashboard
+│   │   │   ├── report/                # Diagnostic report viewer
+│   │   │   ├── onboarding/            # Resume upload + setup
+│   │   │   ├── sign-in/               # Auth: sign in
+│   │   │   └── sign-up/               # Auth: sign up
+│   │   ├── components/
+│   │   │   ├── auth/                  # Auth components
+│   │   │   ├── interview/             # Interview UI components
+│   │   │   ├── layout/                # Layout components
+│   │   │   └── shared/                # Shared UI primitives
+│   │   ├── hooks/                     # Custom React hooks
+│   │   └── lib/                       # Utilities
+│   ├── tailwind.config.ts
+│   └── package.json
+│
+├── backend/
+│   └── conversational-interview/      # FastAPI Application
+│       ├── api.py                     # Main API (chat completions, resume upload)
+│       ├── engine.py                  # LangGraph interview orchestrator
+│       ├── evaluator_planner.py       # Unified evaluation + question planning
+│       ├── models.py                  # Pydantic data models
+│       ├── coding_api.py             # Coding assessment endpoints
+│       ├── report_api.py             # Report generation endpoints
+│       ├── insight_logger.py         # Session insights persistence
+│       ├── resume_parser.py          # PDF resume extraction
+│       ├── llm_factory.py            # LLM provider abstraction
+│       ├── config.py                 # Configuration management
+│       ├── coding_questions.json     # Coding problem bank
+│       └── pyproject.toml            # Python dependencies
+│
+└── README.md
 ```
 
 ---
 
-# 🗄️ Database
+## 🚀 Getting Started
 
-Core entities:
+### Prerequisites
 
-```text
-users
-candidate_profiles
-skills
-candidate_skills
-interview_sessions
-interview_stages
-questions
-question_skills
-responses
-evaluations
-evidence
-claims
-claim_evidence
-coding_submissions
-test_results
-interview_events
-candidate_skill_history
-interview_reports
+- **Node.js** ≥ 18
+- **Python** ≥ 3.11
+- **uv** (Python package manager) — [install](https://docs.astral.sh/uv/getting-started/installation/)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/sannidhyasahoo/Rozgar-Sarthi.git
+cd Rozgar-Sarthi
 ```
 
-The event log records important state transitions such as:
+### 2. Backend Setup
 
-```text
-question_selected
-response_received
-evaluation_completed
-claim_detected
-followup_selected
-difficulty_changed
-hint_requested
-code_submitted
-test_failed
-test_passed
-state_updated
+```bash
+cd backend/conversational-interview
+
+# Create environment and install dependencies
+uv sync
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your API keys:
+#   GOOGLE_API_KEY=your_gemini_api_key
+#   GROQ_API_KEY=your_groq_api_key (optional)
+
+# Start the backend server
+uv run uvicorn api:app --reload --port 8000
 ```
 
-This makes the adaptive engine inspectable and debuggable.
+### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+# Create .env.local with:
+#   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_key
+#   CLERK_SECRET_KEY=your_clerk_secret
+#   NEXT_PUBLIC_VAPI_PUBLIC_KEY=your_vapi_key
+#   NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+
+# Start the development server
+npm run dev
+```
+
+### 4. Open the App
+
+Navigate to **http://localhost:3000** and you're ready to go.
 
 ---
 
-# 🎤 Voice Mode
+## 📡 API Reference
 
-Voice interaction is an optional layer.
+### Core Endpoints
 
-```text
-Microphone
-    ↓
-Speech-to-Text
-    ↓
-Candidate Response
-    ↓
-Evaluation Engine
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/chat/completions` | OpenAI-compatible chat endpoint (streaming SSE) |
+| `POST` | `/api/upload-resume` | Upload PDF resume for profile extraction |
+| `GET` | `/api/report/{call_id}` | Retrieve raw interview insights JSON |
+| `POST` | `/api/reset` | Clear session and candidate data |
+
+### Coding Assessment
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/coding/questions` | Get 3 random coding problems |
+| `POST` | `/api/coding/evaluate` | Submit code for LLM-based evaluation |
+
+### Reports
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/reports/list` | List all available interview reports |
+| `GET` | `/api/reports/{call_id}/generate` | Generate full AI diagnostic report |
+
+---
+
+## 🧠 How the Intelligence Works
+
+### Candidate State Model
+
+Instead of assigning one overall score, the system maintains a live competency vector:
+
+```json
+{
+  "technical_depth": 0.82,
+  "system_design": 0.54,
+  "problem_solving": 0.71,
+  "communication_clarity": 0.76,
+  "ownership_specificity": 0.63
+}
 ```
 
-Supporting audio signals can include:
+Every meaningful interaction updates this state with bounded deltas (±0.2 per turn).
 
-* Speaking rate
-* Pause duration
-* Response latency
-* Filler words
-* Response duration
+### Evidence-Based Assessment
 
-These are **supporting signals**, not evidence of personality, honesty, confidence, or mental state.
+Every claim is extracted, categorized, and tagged:
 
----
-
-# 🛡️ Safety & Fairness
-
-This project is designed as an **interview preparation and diagnostic tool**.
-
-It does not attempt to determine:
-
-* Whether someone is truthful
-* Whether someone will be hired
-* Personality from facial expressions
-* Mental state
-* Intelligence from speech
-
-The system focuses on observable, evidence-based competency signals.
-
-There is deliberately **no facial emotion detection or OpenCV-based personality scoring** in the core system.
-
----
-
-# 📈 Evaluation
-
-The system should be evaluated against human interviewers rather than relying only on subjective claims about AI quality.
-
-Important metrics include:
-
-### Adaptation
-
-Percentage of questions meaningfully conditioned on previous responses.
-
-### Relevance
-
-Human rating of whether follow-ups were appropriate.
-
-### Evidence Quality
-
-Percentage of major assessments supported by identifiable evidence.
-
-### Question Selection
-
-Human rating of whether the selected next question was useful.
-
-### Coding Evaluation
-
-Correlation between AI assessment and human interviewer assessment.
-
-### Consistency Detection
-
-Precision of detected potential inconsistencies.
-
-A human-annotated mock interview dataset can be used to compare:
-
-```text
-Human Evaluation
-       vs
-AI Evaluation
+```
+Claim: "I improved API performance by 40%"
+├── Category: technical_depth
+├── Is Quantified: ✓
+├── Has Evidence: ✗
+├── Missing: baseline metrics, measurement methodology
+└── Signal: unsubstantiated → triggers pressure escalation
 ```
 
-This provides a measurable basis for evaluating the system.
+### Cross-Answer Consistency
+
+Claims made throughout the interview are compared. Contradictions (e.g., *"I designed the backend"* vs. *"My teammate handled the backend"*) are flagged for clarification — not accusation.
+
+### Evasion Detection
+
+The system tracks consecutive evasions. Repeated dodging increases the pressure level and redirects probing to the same competency until sufficient evidence is gathered.
 
 ---
 
-# 🗺️ Roadmap
+## 🎯 Design Philosophy
 
-## Phase 1 — Core Interview Engine
+> **Rozgar Sarthi is not "an LLM that asks interview questions."**
+>
+> It is an **adaptive assessment engine** that continuously updates its understanding of a candidate and selects the next interaction to reduce uncertainty about their actual ability.
 
-* [ ] Candidate profiles
-* [ ] Interview sessions
-* [ ] Question bank
-* [ ] Basic interviewer agent
-* [ ] Structured evaluation
-* [ ] Candidate competency state
+### Core Principles
 
-## Phase 2 — Adaptation
-
-* [ ] Dynamic follow-ups
-* [ ] Skill-gap detection
-* [ ] Adaptive question ranking
-* [ ] Dynamic difficulty
-* [ ] Interview state machine
-
-## Phase 3 — Evidence Intelligence
-
-* [ ] Evidence extraction
-* [ ] Claim extraction
-* [ ] Claim-evidence relationships
-* [ ] Cross-answer consistency
-* [ ] Evidence pressure
-
-## Phase 4 — Coding Interviews
-
-* [ ] Monaco editor
-* [ ] Code execution queue
-* [ ] Docker sandbox
-* [ ] Test runner
-* [ ] Debugging trajectory
-* [ ] Hint dependency tracking
-
-## Phase 5 — Longitudinal Intelligence
-
-* [ ] Interview history
-* [ ] Skill progression
-* [ ] Persistent weakness detection
-* [ ] Retry mechanism
-* [ ] Historical candidate state
-
-## Phase 6 — Advanced Intelligence
-
-* [ ] Information-gain question selection
-* [ ] Voice interviews
-* [ ] Advanced RAG
-* [ ] Human-vs-AI evaluation dataset
-* [ ] Interview replay
-* [ ] Advanced analytics
+1. **Evidence over Impressions** — Every score is traceable to specific moments in the interview
+2. **Adaptation over Scripting** — Questions are selected dynamically, not from a fixed list
+3. **Pressure with Purpose** — Escalation tests depth of knowledge, not stress tolerance
+4. **Transparency** — Candidates can see exactly why they received their scores
+5. **Fairness by Design** — No facial emotion detection, no personality inference, no bias proxies
 
 ---
 
-# 🎯 Product Principle
+## 🛡️ Safety & Ethics
 
-This project is **not**:
+This project is designed as an **interview preparation and diagnostic tool**. It does not attempt to determine:
 
-> "An LLM that asks interview questions."
+- Whether someone is truthful
+- Whether someone should be hired
+- Personality traits from speech patterns
+- Mental state or emotional condition
+- Intelligence from demographic signals
 
-It is:
+The system focuses exclusively on **observable, evidence-based competency signals** and is deliberately built without facial emotion detection or OpenCV-based personality scoring.
 
-> **An adaptive assessment engine that continuously updates its understanding of a candidate and selects the next interaction to reduce uncertainty about their actual ability.**
+---
 
-The fundamental loop is:
+## 🤝 Contributing
 
-```text
-OBSERVE
-   ↓
-EVALUATE
-   ↓
-BUILD EVIDENCE
-   ↓
-UPDATE CANDIDATE MODEL
-   ↓
-IDENTIFY UNCERTAINTY
-   ↓
-PROBE
-   ↓
-PRESSURE TEST
-   ↓
-OBSERVE AGAIN
-   ↺
-```
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
 
-That adaptive loop is the core technical idea behind the entire system.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+<p align="center">
+  <strong>Built with ❤️ for the GirlGeeks Hackathon</strong><br/>
+  <em>Empowering candidates to navigate their career journey with AI-driven preparation</em>
+</p>

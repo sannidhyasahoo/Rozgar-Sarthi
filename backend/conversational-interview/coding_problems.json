@@ -1,0 +1,661 @@
+[
+  {
+    "id": "two-sum",
+    "title": "Two Sum",
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "topics": ["arrays", "hashmap"],
+    "skills": ["hashmap", "arrays"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(n)" },
+    "estimatedMinutes": 10,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given an array of integers `nums` and an integer `target`, return **indices** of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have **exactly one solution**, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+    "examples": [
+      { "input": "nums = [2,7,11,15], target = 9", "output": "[0,1]", "explanation": "Because nums[0] + nums[1] == 9, we return [0, 1]." },
+      { "input": "nums = [3,2,4], target = 6", "output": "[1,2]" },
+      { "input": "nums = [3,3], target = 6", "output": "[0,1]" }
+    ],
+    "constraints": ["2 <= nums.length <= 10^4", "-10^9 <= nums[i] <= 10^9", "-10^9 <= target <= 10^9", "Only one valid answer exists."],
+    "functionSignature": {
+      "python": "def two_sum(nums: list[int], target: int) -> list[int]:",
+      "javascript": "function twoSum(nums, target)",
+      "cpp": "vector<int> twoSum(vector<int>& nums, int target)"
+    },
+    "starterCode": {
+      "python": "def two_sum(nums: list[int], target: int) -> list[int]:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here\n        return {};\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        if target - n in seen:\n            return [seen[target - n], i]\n        seen[n] = i\n"
+    },
+    "visibleTestCases": [
+      { "input": { "nums": [2, 7, 11, 15], "target": 9 }, "expected": [0, 1] },
+      { "input": { "nums": [3, 2, 4], "target": 6 }, "expected": [1, 2] },
+      { "input": { "nums": [3, 3], "target": 6 }, "expected": [0, 1] }
+    ],
+    "hiddenTestCases": [
+      { "input": { "nums": [2, 5], "target": 7 }, "expected": [0, 1] },
+      { "input": { "nums": [-1, -2, -3, -4, -5], "target": -8 }, "expected": [2, 4] },
+      { "input": { "nums": [0, 4, 3, 0], "target": 0 }, "expected": [0, 3] },
+      { "input": { "nums": [1000000000, 999999999], "target": 1999999999 }, "expected": [0, 1] },
+      { "input": { "nums": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "target": 19 }, "expected": [8, 9] },
+      { "input": { "nums": [-3, 4, 3, 90], "target": 0 }, "expected": [0, 2] },
+      { "input": { "nums": [5, 5, 5, 5], "target": 10 }, "expected": [0, 1] }
+    ]
+  },
+  {
+    "id": "valid-parentheses",
+    "title": "Valid Parentheses",
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "topics": ["strings", "stack"],
+    "skills": ["stack", "strings"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(n)" },
+    "estimatedMinutes": 10,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.\n\nAn input string is valid if:\n1. Open brackets must be closed by the same type of brackets.\n2. Open brackets must be closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.",
+    "examples": [
+      { "input": "s = \"()\"", "output": "true" },
+      { "input": "s = \"()[]{}\"", "output": "true" },
+      { "input": "s = \"(]\"", "output": "false" }
+    ],
+    "constraints": ["1 <= s.length <= 10^4", "s consists of parentheses only '()[]{}'."],
+    "functionSignature": {
+      "python": "def is_valid(s: str) -> bool:",
+      "javascript": "function isValid(s)",
+      "cpp": "bool isValid(string s)"
+    },
+    "starterCode": {
+      "python": "def is_valid(s: str) -> bool:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {string} s\n * @return {boolean}\n */\nfunction isValid(s) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <string>\n#include <stack>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool isValid(string s) {\n        // Write your solution here\n        return false;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def is_valid(s):\n    stack = []\n    mapping = {')': '(', '}': '{', ']': '['}\n    for c in s:\n        if c in mapping:\n            top = stack.pop() if stack else '#'\n            if mapping[c] != top:\n                return False\n        else:\n            stack.append(c)\n    return not stack\n"
+    },
+    "visibleTestCases": [
+      { "input": { "s": "()" }, "expected": true },
+      { "input": { "s": "()[]{}" }, "expected": true },
+      { "input": { "s": "(]" }, "expected": false }
+    ],
+    "hiddenTestCases": [
+      { "input": { "s": "" }, "expected": true },
+      { "input": { "s": "(" }, "expected": false },
+      { "input": { "s": "{[]}" }, "expected": true },
+      { "input": { "s": "([)]" }, "expected": false },
+      { "input": { "s": "]" }, "expected": false },
+      { "input": { "s": "(((((" }, "expected": false },
+      { "input": { "s": ")))))(((((" }, "expected": false },
+      { "input": { "s": "{[()]}{[()]}" }, "expected": true }
+    ]
+  },
+  {
+    "id": "best-time-buy-sell",
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "topics": ["arrays", "greedy"],
+    "skills": ["greedy", "arrays"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(1)" },
+    "estimatedMinutes": 12,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `i`th day.\n\nYou want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.\n\nReturn the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return `0`.",
+    "examples": [
+      { "input": "prices = [7,1,5,3,6,4]", "output": "5", "explanation": "Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5." },
+      { "input": "prices = [7,6,4,3,1]", "output": "0", "explanation": "No profitable transaction is possible." }
+    ],
+    "constraints": ["1 <= prices.length <= 10^5", "0 <= prices[i] <= 10^4"],
+    "functionSignature": {
+      "python": "def max_profit(prices: list[int]) -> int:",
+      "javascript": "function maxProfit(prices)",
+      "cpp": "int maxProfit(vector<int>& prices)"
+    },
+    "starterCode": {
+      "python": "def max_profit(prices: list[int]) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} prices\n * @return {number}\n */\nfunction maxProfit(prices) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        // Write your solution here\n        return 0;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def max_profit(prices):\n    min_price = float('inf')\n    max_profit = 0\n    for p in prices:\n        min_price = min(min_price, p)\n        max_profit = max(max_profit, p - min_price)\n    return max_profit\n"
+    },
+    "visibleTestCases": [
+      { "input": { "prices": [7, 1, 5, 3, 6, 4] }, "expected": 5 },
+      { "input": { "prices": [7, 6, 4, 3, 1] }, "expected": 0 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "prices": [1] }, "expected": 0 },
+      { "input": { "prices": [2, 4, 1] }, "expected": 2 },
+      { "input": { "prices": [3, 3, 3, 3] }, "expected": 0 },
+      { "input": { "prices": [1, 2, 3, 4, 5] }, "expected": 4 },
+      { "input": { "prices": [5, 4, 3, 2, 1, 10] }, "expected": 9 },
+      { "input": { "prices": [0, 0, 0, 1] }, "expected": 1 },
+      { "input": { "prices": [10000, 0, 10000] }, "expected": 10000 }
+    ]
+  },
+  {
+    "id": "binary-search",
+    "title": "Binary Search",
+    "difficulty": 1,
+    "difficultyLabel": "Easy",
+    "topics": ["arrays", "binary-search"],
+    "skills": ["binarySearch"],
+    "expectedComplexity": { "time": "O(log n)", "space": "O(1)" },
+    "estimatedMinutes": 10,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given an array of integers `nums` which is sorted in ascending order, and an integer `target`, write a function to search `target` in `nums`. If `target` exists, then return its index. Otherwise, return `-1`.\n\nYou must write an algorithm with `O(log n)` runtime complexity.",
+    "examples": [
+      { "input": "nums = [-1,0,3,5,9,12], target = 9", "output": "4" },
+      { "input": "nums = [-1,0,3,5,9,12], target = 2", "output": "-1" }
+    ],
+    "constraints": ["1 <= nums.length <= 10^4", "-10^4 < nums[i], target < 10^4", "All the integers in nums are unique.", "nums is sorted in ascending order."],
+    "functionSignature": {
+      "python": "def search(nums: list[int], target: int) -> int:",
+      "javascript": "function search(nums, target)",
+      "cpp": "int search(vector<int>& nums, int target)"
+    },
+    "starterCode": {
+      "python": "def search(nums: list[int], target: int) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number}\n */\nfunction search(nums, target) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        // Write your solution here\n        return -1;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def search(nums, target):\n    lo, hi = 0, len(nums) - 1\n    while lo <= hi:\n        mid = (lo + hi) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1\n"
+    },
+    "visibleTestCases": [
+      { "input": { "nums": [-1, 0, 3, 5, 9, 12], "target": 9 }, "expected": 4 },
+      { "input": { "nums": [-1, 0, 3, 5, 9, 12], "target": 2 }, "expected": -1 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "nums": [5], "target": 5 }, "expected": 0 },
+      { "input": { "nums": [5], "target": 3 }, "expected": -1 },
+      { "input": { "nums": [1, 2, 3, 4, 5], "target": 1 }, "expected": 0 },
+      { "input": { "nums": [1, 2, 3, 4, 5], "target": 5 }, "expected": 4 },
+      { "input": { "nums": [-5, -3, -1, 0, 2, 4], "target": -3 }, "expected": 1 },
+      { "input": { "nums": [1, 3, 5, 7, 9, 11, 13], "target": 6 }, "expected": -1 },
+      { "input": { "nums": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "target": 0 }, "expected": 0 }
+    ]
+  },
+  {
+    "id": "longest-substring",
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["strings", "hashmap", "sliding-window"],
+    "skills": ["hashmap", "slidingWindow"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(min(n, alphabet))" },
+    "estimatedMinutes": 20,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given a string `s`, find the length of the **longest substring** without repeating characters.",
+    "examples": [
+      { "input": "s = \"abcabcbb\"", "output": "3", "explanation": "The answer is 'abc', with the length of 3." },
+      { "input": "s = \"bbbbb\"", "output": "1", "explanation": "The answer is 'b', with the length of 1." },
+      { "input": "s = \"pwwkew\"", "output": "3", "explanation": "The answer is 'wke', with the length of 3." }
+    ],
+    "constraints": ["0 <= s.length <= 5 * 10^4", "s consists of English letters, digits, symbols and spaces."],
+    "functionSignature": {
+      "python": "def length_of_longest_substring(s: str) -> int:",
+      "javascript": "function lengthOfLongestSubstring(s)",
+      "cpp": "int lengthOfLongestSubstring(string s)"
+    },
+    "starterCode": {
+      "python": "def length_of_longest_substring(s: str) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {string} s\n * @return {number}\n */\nfunction lengthOfLongestSubstring(s) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <string>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        // Write your solution here\n        return 0;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def length_of_longest_substring(s):\n    seen = {}\n    left = 0\n    best = 0\n    for right, ch in enumerate(s):\n        if ch in seen and seen[ch] >= left:\n            left = seen[ch] + 1\n        seen[ch] = right\n        best = max(best, right - left + 1)\n    return best\n"
+    },
+    "visibleTestCases": [
+      { "input": { "s": "abcabcbb" }, "expected": 3 },
+      { "input": { "s": "bbbbb" }, "expected": 1 },
+      { "input": { "s": "pwwkew" }, "expected": 3 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "s": "" }, "expected": 0 },
+      { "input": { "s": " " }, "expected": 1 },
+      { "input": { "s": "au" }, "expected": 2 },
+      { "input": { "s": "dvdf" }, "expected": 3 },
+      { "input": { "s": "abcdefghijklmnopqrstuvwxyz" }, "expected": 26 },
+      { "input": { "s": "aab" }, "expected": 2 },
+      { "input": { "s": "tmmzuxt" }, "expected": 5 }
+    ]
+  },
+  {
+    "id": "product-except-self",
+    "title": "Product of Array Except Self",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["arrays", "prefix-suffix"],
+    "skills": ["arrays"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(1)" },
+    "estimatedMinutes": 20,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to the product of all the elements of `nums` except `nums[i]`.\n\nThe product of any prefix or suffix of `nums` is **guaranteed** to fit in a **32-bit** integer.\n\nYou must write an algorithm that runs in `O(n)` time and without using the division operation.",
+    "examples": [
+      { "input": "nums = [1,2,3,4]", "output": "[24,12,8,6]" },
+      { "input": "nums = [-1,1,0,-3,3]", "output": "[0,0,9,0,0]" }
+    ],
+    "constraints": ["2 <= nums.length <= 10^5", "-30 <= nums[i] <= 30", "The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer."],
+    "functionSignature": {
+      "python": "def product_except_self(nums: list[int]) -> list[int]:",
+      "javascript": "function productExceptSelf(nums)",
+      "cpp": "vector<int> productExceptSelf(vector<int>& nums)"
+    },
+    "starterCode": {
+      "python": "def product_except_self(nums: list[int]) -> list[int]:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} nums\n * @return {number[]}\n */\nfunction productExceptSelf(nums) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n        // Write your solution here\n        return {};\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def product_except_self(nums):\n    n = len(nums)\n    res = [1] * n\n    prefix = 1\n    for i in range(n):\n        res[i] = prefix\n        prefix *= nums[i]\n    suffix = 1\n    for i in range(n - 1, -1, -1):\n        res[i] *= suffix\n        suffix *= nums[i]\n    return res\n"
+    },
+    "visibleTestCases": [
+      { "input": { "nums": [1, 2, 3, 4] }, "expected": [24, 12, 8, 6] },
+      { "input": { "nums": [-1, 1, 0, -3, 3] }, "expected": [0, 0, 9, 0, 0] }
+    ],
+    "hiddenTestCases": [
+      { "input": { "nums": [1, 1] }, "expected": [1, 1] },
+      { "input": { "nums": [0, 0] }, "expected": [0, 0] },
+      { "input": { "nums": [-1, -2] }, "expected": [-2, -1] },
+      { "input": { "nums": [5, 0, 3, 2] }, "expected": [0, 30, 0, 0] },
+      { "input": { "nums": [1, 2, 3, 4, 5] }, "expected": [120, 60, 40, 30, 24] },
+      { "input": { "nums": [0, 1, 0] }, "expected": [0, 0, 0] }
+    ]
+  },
+  {
+    "id": "merge-intervals",
+    "title": "Merge Intervals",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["arrays", "sorting", "intervals"],
+    "skills": ["arrays"],
+    "expectedComplexity": { "time": "O(n log n)", "space": "O(n)" },
+    "estimatedMinutes": 20,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "examples": [
+      { "input": "intervals = [[1,3],[2,6],[8,10],[15,18]]", "output": "[[1,6],[8,10],[15,18]]", "explanation": "Since intervals [1,3] and [2,6] overlap, merge them into [1,6]." },
+      { "input": "intervals = [[1,4],[4,5]]", "output": "[[1,5]]", "explanation": "Intervals [1,4] and [4,5] are considered overlapping." }
+    ],
+    "constraints": ["1 <= intervals.length <= 10^4", "intervals[i].length == 2", "0 <= starti <= endi <= 10^4"],
+    "functionSignature": {
+      "python": "def merge(intervals: list[list[int]]) -> list[list[int]]:",
+      "javascript": "function merge(intervals)",
+      "cpp": "vector<vector<int>> merge(vector<vector<int>>& intervals)"
+    },
+    "starterCode": {
+      "python": "def merge(intervals: list[list[int]]) -> list[list[int]]:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[][]} intervals\n * @return {number[][]}\n */\nfunction merge(intervals) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        // Write your solution here\n        return {};\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def merge(intervals):\n    intervals.sort(key=lambda x: x[0])\n    merged = []\n    for interval in intervals:\n        if not merged or merged[-1][1] < interval[0]:\n            merged.append(interval)\n        else:\n            merged[-1][1] = max(merged[-1][1], interval[1])\n    return merged\n"
+    },
+    "visibleTestCases": [
+      { "input": { "intervals": [[1, 3], [2, 6], [8, 10], [15, 18]] }, "expected": [[1, 6], [8, 10], [15, 18]] },
+      { "input": { "intervals": [[1, 4], [4, 5]] }, "expected": [[1, 5]] }
+    ],
+    "hiddenTestCases": [
+      { "input": { "intervals": [[1, 1]] }, "expected": [[1, 1]] },
+      { "input": { "intervals": [[1, 4], [2, 3]] }, "expected": [[1, 4]] },
+      { "input": { "intervals": [[1, 4], [0, 4]] }, "expected": [[0, 4]] },
+      { "input": { "intervals": [[1, 4], [0, 1]] }, "expected": [[0, 4]] },
+      { "input": { "intervals": [[1, 10], [2, 3], [4, 5], [6, 7], [8, 9]] }, "expected": [[1, 10]] },
+      { "input": { "intervals": [[1, 2], [3, 4], [5, 6]] }, "expected": [[1, 2], [3, 4], [5, 6]] }
+    ]
+  },
+  {
+    "id": "top-k-frequent",
+    "title": "Top K Frequent Elements",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["arrays", "hashmap", "heap"],
+    "skills": ["hashmap", "arrays"],
+    "expectedComplexity": { "time": "O(n log k)", "space": "O(n)" },
+    "estimatedMinutes": 20,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given an integer array `nums` and an integer `k`, return the `k` most frequent elements. You may return the answer in **any order**.",
+    "examples": [
+      { "input": "nums = [1,1,1,2,2,3], k = 2", "output": "[1,2]" },
+      { "input": "nums = [1], k = 1", "output": "[1]" }
+    ],
+    "constraints": ["1 <= nums.length <= 10^5", "-10^4 <= nums[i] <= 10^4", "k is in the range [1, the number of unique elements in the array].", "It is guaranteed that the answer is unique."],
+    "functionSignature": {
+      "python": "def top_k_frequent(nums: list[int], k: int) -> list[int]:",
+      "javascript": "function topKFrequent(nums, k)",
+      "cpp": "vector<int> topKFrequent(vector<int>& nums, int k)"
+    },
+    "starterCode": {
+      "python": "def top_k_frequent(nums: list[int], k: int) -> list[int]:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} nums\n * @param {number} k\n * @return {number[]}\n */\nfunction topKFrequent(nums, k) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <unordered_map>\n#include <queue>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> topKFrequent(vector<int>& nums, int k) {\n        // Write your solution here\n        return {};\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "from collections import Counter\nimport heapq\ndef top_k_frequent(nums, k):\n    count = Counter(nums)\n    return heapq.nlargest(k, count.keys(), key=count.get)\n"
+    },
+    "visibleTestCases": [
+      { "input": { "nums": [1, 1, 1, 2, 2, 3], "k": 2 }, "expected": [1, 2] },
+      { "input": { "nums": [1], "k": 1 }, "expected": [1] }
+    ],
+    "hiddenTestCases": [
+      { "input": { "nums": [4, 1, -1, 2, -1, 2, 3], "k": 2 }, "expected": [-1, 2] },
+      { "input": { "nums": [1, 2], "k": 2 }, "expected": [1, 2] },
+      { "input": { "nums": [1, 1, 2, 2, 3, 3], "k": 3 }, "expected": [1, 2, 3] },
+      { "input": { "nums": [5, 5, 5, 5, 5], "k": 1 }, "expected": [5] },
+      { "input": { "nums": [-1, -1], "k": 1 }, "expected": [-1] }
+    ]
+  },
+  {
+    "id": "number-of-islands",
+    "title": "Number of Islands",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["arrays", "graphs", "BFS", "DFS"],
+    "skills": ["graphs", "recursion"],
+    "expectedComplexity": { "time": "O(m*n)", "space": "O(m*n)" },
+    "estimatedMinutes": 25,
+    "timeLimit": 3.0,
+    "memoryLimit": 256,
+    "description": "Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return the number of islands.\n\nAn island is surrounded by water and is formed by connecting adjacent lands **horizontally or vertically**. You may assume all four edges of the grid are all surrounded by water.",
+    "examples": [
+      { "input": "grid = [[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]", "output": "1" },
+      { "input": "grid = [[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"1\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"1\",\"1\"]]", "output": "3" }
+    ],
+    "constraints": ["m == grid.length", "n == grid[i].length", "1 <= m, n <= 300", "grid[i][j] is '0' or '1'."],
+    "functionSignature": {
+      "python": "def num_islands(grid: list[list[str]]) -> int:",
+      "javascript": "function numIslands(grid)",
+      "cpp": "int numIslands(vector<vector<char>>& grid)"
+    },
+    "starterCode": {
+      "python": "def num_islands(grid: list[list[str]]) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {character[][]} grid\n * @return {number}\n */\nfunction numIslands(grid) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <string>\nusing namespace std;\n\nclass Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        // Write your solution here\n        return 0;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def num_islands(grid):\n    if not grid:\n        return 0\n    count = 0\n    def dfs(r, c):\n        if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]) or grid[r][c] != '1':\n            return\n        grid[r][c] = '#'\n        dfs(r+1, c); dfs(r-1, c); dfs(r, c+1); dfs(r, c-1)\n    for r in range(len(grid)):\n        for c in range(len(grid[0])):\n            if grid[r][c] == '1':\n                dfs(r, c)\n                count += 1\n    return count\n"
+    },
+    "visibleTestCases": [
+      { "input": { "grid": [["1","1","1","1","0"],["1","1","0","1","0"],["1","1","0","0","0"],["0","0","0","0","0"]] }, "expected": 1 },
+      { "input": { "grid": [["1","1","0","0","0"],["1","1","0","0","0"],["0","0","1","0","0"],["0","0","0","1","1"]] }, "expected": 3 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "grid": [["1"]] }, "expected": 1 },
+      { "input": { "grid": [["0"]] }, "expected": 0 },
+      { "input": { "grid": [["1","0"],["0","1"]] }, "expected": 2 },
+      { "input": { "grid": [["1","1"],["1","1"]] }, "expected": 1 },
+      { "input": { "grid": [["1","0","1","0","1"]] }, "expected": 3 },
+      { "input": { "grid": [["0","0","0"],["0","0","0"],["0","0","0"]] }, "expected": 0 },
+      { "input": { "grid": [["1","1","1"],["0","1","0"],["1","1","1"]] }, "expected": 1 }
+    ]
+  },
+  {
+    "id": "binary-tree-level-order",
+    "title": "Binary Tree Level Order Traversal",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["trees", "BFS"],
+    "skills": ["trees", "graphs"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(n)" },
+    "estimatedMinutes": 20,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given the `root` of a binary tree, return the level order traversal of its nodes' values (i.e., from left to right, level by level).\n\nThe tree is provided as an array where `null` represents missing nodes.\n\nYour function should accept and return nested lists of integers.",
+    "examples": [
+      { "input": "root = [3,9,20,null,null,15,7]", "output": "[[3],[9,20],[15,7]]" },
+      { "input": "root = [1]", "output": "[[1]]" },
+      { "input": "root = []", "output": "[]" }
+    ],
+    "constraints": ["The number of nodes in the tree is in the range [0, 2000].", "-1000 <= Node.val <= 1000"],
+    "functionSignature": {
+      "python": "def level_order(root) -> list[list[int]]:",
+      "javascript": "function levelOrder(root)",
+      "cpp": "vector<vector<int>> levelOrder(TreeNode* root)"
+    },
+    "starterCode": {
+      "python": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef level_order(root) -> list[list[int]]:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val, left, right) {\n *     this.val = (val===undefined ? 0 : val)\n *     this.left = (left===undefined ? null : left)\n *     this.right = (right===undefined ? null : right)\n * }\n * @param {TreeNode} root\n * @return {number[][]}\n */\nfunction levelOrder(root) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <queue>\nusing namespace std;\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    vector<vector<int>> levelOrder(TreeNode* root) {\n        // Write your solution here\n        return {};\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "from collections import deque\ndef level_order(root):\n    if not root:\n        return []\n    result = []\n    queue = deque([root])\n    while queue:\n        level = []\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            level.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        result.append(level)\n    return result\n"
+    },
+    "visibleTestCases": [
+      { "input": { "tree": [3, 9, 20, null, null, 15, 7] }, "expected": [[3], [9, 20], [15, 7]] },
+      { "input": { "tree": [1] }, "expected": [[1]] },
+      { "input": { "tree": [] }, "expected": [] }
+    ],
+    "hiddenTestCases": [
+      { "input": { "tree": [1, 2, 3, 4, 5] }, "expected": [[1], [2, 3], [4, 5]] },
+      { "input": { "tree": [1, null, 2, null, 3] }, "expected": [[1], [2], [3]] },
+      { "input": { "tree": [1, 2] }, "expected": [[1], [2]] },
+      { "input": { "tree": [1, 2, 3, 4, null, null, 5] }, "expected": [[1], [2, 3], [4, 5]] }
+    ]
+  },
+  {
+    "id": "lowest-common-ancestor",
+    "title": "Lowest Common Ancestor of a Binary Tree",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["trees", "recursion"],
+    "skills": ["trees", "recursion"],
+    "expectedComplexity": { "time": "O(n)", "space": "O(n)" },
+    "estimatedMinutes": 25,
+    "timeLimit": 2.0,
+    "memoryLimit": 256,
+    "description": "Given a binary tree, find the lowest common ancestor (LCA) of two given nodes `p` and `q`.\n\nThe LCA is defined as the lowest node in the tree that has both `p` and `q` as descendants (a node can be a descendant of itself).\n\nYour function receives the root and two values `p` and `q`, and should return the value of the LCA node.",
+    "examples": [
+      { "input": "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1", "output": "3" },
+      { "input": "root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4", "output": "5" }
+    ],
+    "constraints": ["The number of nodes in the tree is in the range [2, 10^5].", "-10^9 <= Node.val <= 10^9", "All Node.val are unique.", "p != q", "p and q will exist in the tree."],
+    "functionSignature": {
+      "python": "def lowest_common_ancestor(root, p: int, q: int) -> int:",
+      "javascript": "function lowestCommonAncestor(root, p, q)",
+      "cpp": "TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q)"
+    },
+    "starterCode": {
+      "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef lowest_common_ancestor(root, p: int, q: int) -> int:\n    # root is a TreeNode, p and q are integer values\n    # Return the integer value of the LCA node\n    pass\n",
+      "javascript": "function lowestCommonAncestor(root, p, q) {\n    // root is a TreeNode, p and q are integer values\n    // Return the integer value of the LCA node\n}\n",
+      "cpp": "int lowestCommonAncestor(TreeNode* root, int p, int q) {\n    // Return the value of the LCA node\n    return 0;\n}\n"
+    },
+    "solutionReference": {
+      "python": "def lowest_common_ancestor(root, p, q):\n    if not root:\n        return None\n    if root.val == p or root.val == q:\n        return root\n    left = lowest_common_ancestor(root.left, p, q)\n    right = lowest_common_ancestor(root.right, p, q)\n    if left and right:\n        return root\n    return left if left else right\n"
+    },
+    "visibleTestCases": [
+      { "input": { "tree": [3,5,1,6,2,0,8,null,null,7,4], "p": 5, "q": 1 }, "expected": 3 },
+      { "input": { "tree": [3,5,1,6,2,0,8,null,null,7,4], "p": 5, "q": 4 }, "expected": 5 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "tree": [1, 2], "p": 1, "q": 2 }, "expected": 1 },
+      { "input": { "tree": [3, 5, 1], "p": 5, "q": 3 }, "expected": 3 },
+      { "input": { "tree": [1, 2, 3, 4, 5], "p": 4, "q": 5 }, "expected": 2 },
+      { "input": { "tree": [1, 2, 3, 4, 5], "p": 2, "q": 3 }, "expected": 1 }
+    ]
+  },
+  {
+    "id": "coin-change",
+    "title": "Coin Change",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["dynamic-programming"],
+    "skills": ["dynamicProgramming"],
+    "expectedComplexity": { "time": "O(amount * n)", "space": "O(amount)" },
+    "estimatedMinutes": 25,
+    "timeLimit": 3.0,
+    "memoryLimit": 256,
+    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money.\n\nReturn the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return `-1`.\n\nYou may assume that you have an **infinite** number of each kind of coin.",
+    "examples": [
+      { "input": "coins = [1,2,5], amount = 11", "output": "3", "explanation": "11 = 5 + 5 + 1" },
+      { "input": "coins = [2], amount = 3", "output": "-1" },
+      { "input": "coins = [1], amount = 0", "output": "0" }
+    ],
+    "constraints": ["1 <= coins.length <= 12", "1 <= coins[i] <= 2^31 - 1", "0 <= amount <= 10^4"],
+    "functionSignature": {
+      "python": "def coin_change(coins: list[int], amount: int) -> int:",
+      "javascript": "function coinChange(coins, amount)",
+      "cpp": "int coinChange(vector<int>& coins, int amount)"
+    },
+    "starterCode": {
+      "python": "def coin_change(coins: list[int], amount: int) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} coins\n * @param {number} amount\n * @return {number}\n */\nfunction coinChange(coins, amount) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\n#include <algorithm>\nusing namespace std;\n\nclass Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        // Write your solution here\n        return -1;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def coin_change(coins, amount):\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return dp[amount] if dp[amount] != float('inf') else -1\n"
+    },
+    "visibleTestCases": [
+      { "input": { "coins": [1, 2, 5], "amount": 11 }, "expected": 3 },
+      { "input": { "coins": [2], "amount": 3 }, "expected": -1 },
+      { "input": { "coins": [1], "amount": 0 }, "expected": 0 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "coins": [1], "amount": 1 }, "expected": 1 },
+      { "input": { "coins": [1], "amount": 100 }, "expected": 100 },
+      { "input": { "coins": [5, 10, 25], "amount": 30 }, "expected": 2 },
+      { "input": { "coins": [3, 7], "amount": 11 }, "expected": -1 },
+      { "input": { "coins": [186, 419, 83, 408], "amount": 6249 }, "expected": 20 },
+      { "input": { "coins": [2], "amount": 0 }, "expected": 0 }
+    ]
+  },
+  {
+    "id": "longest-increasing-subsequence",
+    "title": "Longest Increasing Subsequence",
+    "difficulty": 3,
+    "difficultyLabel": "Medium",
+    "topics": ["dynamic-programming", "binary-search"],
+    "skills": ["dynamicProgramming", "binarySearch"],
+    "expectedComplexity": { "time": "O(n log n)", "space": "O(n)" },
+    "estimatedMinutes": 25,
+    "timeLimit": 3.0,
+    "memoryLimit": 256,
+    "description": "Given an integer array `nums`, return the length of the longest **strictly increasing subsequence**.",
+    "examples": [
+      { "input": "nums = [10,9,2,5,3,7,101,18]", "output": "4", "explanation": "The longest increasing subsequence is [2,3,7,101], therefore the length is 4." },
+      { "input": "nums = [0,1,0,3,2,3]", "output": "4" },
+      { "input": "nums = [7,7,7,7,7,7,7]", "output": "1" }
+    ],
+    "constraints": ["1 <= nums.length <= 2500", "-10^4 <= nums[i] <= 10^4"],
+    "functionSignature": {
+      "python": "def length_of_lis(nums: list[int]) -> int:",
+      "javascript": "function lengthOfLIS(nums)",
+      "cpp": "int lengthOfLIS(vector<int>& nums)"
+    },
+    "starterCode": {
+      "python": "def length_of_lis(nums: list[int]) -> int:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number[]} nums\n * @return {number}\n */\nfunction lengthOfLIS(nums) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    int lengthOfLIS(vector<int>& nums) {\n        // Write your solution here\n        return 0;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "import bisect\ndef length_of_lis(nums):\n    tails = []\n    for n in nums:\n        pos = bisect.bisect_left(tails, n)\n        if pos == len(tails):\n            tails.append(n)\n        else:\n            tails[pos] = n\n    return len(tails)\n"
+    },
+    "visibleTestCases": [
+      { "input": { "nums": [10, 9, 2, 5, 3, 7, 101, 18] }, "expected": 4 },
+      { "input": { "nums": [0, 1, 0, 3, 2, 3] }, "expected": 4 },
+      { "input": { "nums": [7, 7, 7, 7, 7, 7, 7] }, "expected": 1 }
+    ],
+    "hiddenTestCases": [
+      { "input": { "nums": [1] }, "expected": 1 },
+      { "input": { "nums": [1, 2, 3, 4, 5] }, "expected": 5 },
+      { "input": { "nums": [5, 4, 3, 2, 1] }, "expected": 1 },
+      { "input": { "nums": [1, 3, 6, 7, 9, 4, 10, 5, 6] }, "expected": 6 },
+      { "input": { "nums": [2, 2] }, "expected": 1 }
+    ]
+  },
+  {
+    "id": "course-schedule",
+    "title": "Course Schedule",
+    "difficulty": 4,
+    "difficultyLabel": "Medium-Hard",
+    "topics": ["graphs", "topological-sort", "DFS"],
+    "skills": ["graphs"],
+    "expectedComplexity": { "time": "O(V+E)", "space": "O(V+E)" },
+    "estimatedMinutes": 30,
+    "timeLimit": 3.0,
+    "memoryLimit": 256,
+    "description": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you **must** take course `bi` first if you want to take course `ai`.\n\nReturn `true` if you can finish all courses. Otherwise, return `false`.",
+    "examples": [
+      { "input": "numCourses = 2, prerequisites = [[1,0]]", "output": "true", "explanation": "Take course 0 then course 1." },
+      { "input": "numCourses = 2, prerequisites = [[1,0],[0,1]]", "output": "false", "explanation": "Cycle detected." }
+    ],
+    "constraints": ["1 <= numCourses <= 2000", "0 <= prerequisites.length <= 5000", "prerequisites[i].length == 2", "0 <= ai, bi < numCourses", "All the pairs prerequisites[i] are unique."],
+    "functionSignature": {
+      "python": "def can_finish(numCourses: int, prerequisites: list[list[int]]) -> bool:",
+      "javascript": "function canFinish(numCourses, prerequisites)",
+      "cpp": "bool canFinish(int numCourses, vector<vector<int>>& prerequisites)"
+    },
+    "starterCode": {
+      "python": "def can_finish(numCourses: int, prerequisites: list[list[int]]) -> bool:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {number} numCourses\n * @param {number[][]} prerequisites\n * @return {boolean}\n */\nfunction canFinish(numCourses, prerequisites) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {\n        // Write your solution here\n        return false;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def can_finish(numCourses, prerequisites):\n    graph = [[] for _ in range(numCourses)]\n    for a, b in prerequisites:\n        graph[b].append(a)\n    # 0=unvisited, 1=visiting, 2=visited\n    state = [0] * numCourses\n    def dfs(node):\n        if state[node] == 1:\n            return False  # cycle\n        if state[node] == 2:\n            return True\n        state[node] = 1\n        for nei in graph[node]:\n            if not dfs(nei):\n                return False\n        state[node] = 2\n        return True\n    return all(dfs(i) for i in range(numCourses))\n"
+    },
+    "visibleTestCases": [
+      { "input": { "numCourses": 2, "prerequisites": [[1, 0]] }, "expected": true },
+      { "input": { "numCourses": 2, "prerequisites": [[1, 0], [0, 1]] }, "expected": false }
+    ],
+    "hiddenTestCases": [
+      { "input": { "numCourses": 1, "prerequisites": [] }, "expected": true },
+      { "input": { "numCourses": 5, "prerequisites": [[1,0],[2,1],[3,2],[4,3]] }, "expected": true },
+      { "input": { "numCourses": 3, "prerequisites": [[1,0],[2,1],[0,2]] }, "expected": false },
+      { "input": { "numCourses": 4, "prerequisites": [[1,0],[2,0],[3,1],[3,2]] }, "expected": true },
+      { "input": { "numCourses": 3, "prerequisites": [[1,0],[1,2],[0,1]] }, "expected": false },
+      { "input": { "numCourses": 2, "prerequisites": [] }, "expected": true }
+    ]
+  },
+  {
+    "id": "word-break",
+    "title": "Word Break",
+    "difficulty": 4,
+    "difficultyLabel": "Medium-Hard",
+    "topics": ["dynamic-programming", "strings"],
+    "skills": ["dynamicProgramming", "strings"],
+    "expectedComplexity": { "time": "O(n^2 * m)", "space": "O(n)" },
+    "estimatedMinutes": 30,
+    "timeLimit": 3.0,
+    "memoryLimit": 256,
+    "description": "Given a string `s` and a dictionary of strings `wordDict`, return `true` if `s` can be segmented into a space-separated sequence of one or more dictionary words.\n\n**Note** that the same word in the dictionary may be reused multiple times in the segmentation.",
+    "examples": [
+      { "input": "s = \"leetcode\", wordDict = [\"leet\",\"code\"]", "output": "true", "explanation": "Return true because 'leetcode' can be segmented as 'leet code'." },
+      { "input": "s = \"applepenapple\", wordDict = [\"apple\",\"pen\"]", "output": "true", "explanation": "'apple pen apple'" },
+      { "input": "s = \"catsandog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]", "output": "false" }
+    ],
+    "constraints": ["1 <= s.length <= 300", "1 <= wordDict.length <= 1000", "1 <= wordDict[i].length <= 20", "s and wordDict[i] consist of only lowercase English letters.", "All the strings of wordDict are unique."],
+    "functionSignature": {
+      "python": "def word_break(s: str, wordDict: list[str]) -> bool:",
+      "javascript": "function wordBreak(s, wordDict)",
+      "cpp": "bool wordBreak(string s, vector<string>& wordDict)"
+    },
+    "starterCode": {
+      "python": "def word_break(s: str, wordDict: list[str]) -> bool:\n    # Write your solution here\n    pass\n",
+      "javascript": "/**\n * @param {string} s\n * @param {string[]} wordDict\n * @return {boolean}\n */\nfunction wordBreak(s, wordDict) {\n    // Write your solution here\n}\n",
+      "cpp": "#include <string>\n#include <vector>\n#include <unordered_set>\nusing namespace std;\n\nclass Solution {\npublic:\n    bool wordBreak(string s, vector<string>& wordDict) {\n        // Write your solution here\n        return false;\n    }\n};\n"
+    },
+    "solutionReference": {
+      "python": "def word_break(s, wordDict):\n    word_set = set(wordDict)\n    dp = [False] * (len(s) + 1)\n    dp[0] = True\n    for i in range(1, len(s) + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[len(s)]\n"
+    },
+    "visibleTestCases": [
+      { "input": { "s": "leetcode", "wordDict": ["leet", "code"] }, "expected": true },
+      { "input": { "s": "applepenapple", "wordDict": ["apple", "pen"] }, "expected": true },
+      { "input": { "s": "catsandog", "wordDict": ["cats", "dog", "sand", "and", "cat"] }, "expected": false }
+    ],
+    "hiddenTestCases": [
+      { "input": { "s": "a", "wordDict": ["a"] }, "expected": true },
+      { "input": { "s": "ab", "wordDict": ["a", "b"] }, "expected": true },
+      { "input": { "s": "cars", "wordDict": ["car", "ca", "rs"] }, "expected": true },
+      { "input": { "s": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab", "wordDict": ["a","aa","aaa","aaaa","aaaaa","aaaaaa","aaaaaaa","aaaaaaaa","aaaaaaaaa","aaaaaaaaaa"] }, "expected": false },
+      { "input": { "s": "bb", "wordDict": ["a", "b", "bbb", "bbbb"] }, "expected": true }
+    ]
+  }
+]
