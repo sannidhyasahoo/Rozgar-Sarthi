@@ -1,0 +1,199 @@
+{
+  "id": "13abdeea-2ba2-40d8-8b81-17e944faf7ec",
+  "createdAt": "2026-09-07T03:11:55.320159",
+  "updatedAt": "2026-09-07T03:16:44.910989",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T03:11:55.320159",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T03:11:55.331661",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "9b37aea2-a948-4d1f-8906-aa1689a38625",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T03:16:27.692328",
+          "isRun": true,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 3016.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              },
+              {
+                "index": 1,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              },
+              {
+                "index": 2,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "8958153f-1654-46c8-99bf-29bc53e4646c",
+          "questionId": "two-sum",
+          "attemptNumber": 2,
+          "language": "javascript",
+          "code": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n}\n",
+          "submittedAt": "2026-09-07T03:16:31.429240",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Harness build error: name 'json' is not defined",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "56f0fe91-e5f2-4e19-9e60-84bcaed92973",
+          "questionId": "two-sum",
+          "attemptNumber": 3,
+          "language": "javascript",
+          "code": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n}\n",
+          "submittedAt": "2026-09-07T03:16:32.507478",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Harness build error: name 'json' is not defined",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "8bed15b9-b8ab-4197-beab-42c0227faaaf",
+          "questionId": "two-sum",
+          "attemptNumber": 4,
+          "language": "javascript",
+          "code": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    // Write your solution here\n}\n",
+          "submittedAt": "2026-09-07T03:16:35.282067",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Harness build error: name 'json' is not defined",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "18491cd6-11b6-4e46-b955-19beabe2289f",
+          "questionId": "two-sum",
+          "attemptNumber": 5,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here\n        return {};\n    }\n};\n",
+          "submittedAt": "2026-09-07T03:16:44.910989",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 50.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 50.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 50.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

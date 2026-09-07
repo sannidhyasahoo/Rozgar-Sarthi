@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "title": "Two Sum",
+    "difficulty": "Easy",
+    "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.",
+    "starter_code": {
+      "python": "def two_sum(nums, target):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Write your code here\n        return new int[]{};\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your code here\n        return {};\n    }\n};"
+    }
+  },
+  {
+    "id": 2,
+    "title": "Valid Parentheses",
+    "difficulty": "Easy",
+    "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.",
+    "starter_code": {
+      "python": "def is_valid(s: str) -> bool:\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public boolean isValid(String s) {\n        // Write your code here\n        return false;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    bool isValid(string s) {\n        // Write your code here\n        return false;\n    }\n};"
+    }
+  },
+  {
+    "id": 3,
+    "title": "Merge Two Sorted Lists",
+    "difficulty": "Easy",
+    "description": "You are given the heads of two sorted linked lists list1 and list2.\nMerge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.",
+    "starter_code": {
+      "python": "# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\ndef merge_two_lists(list1, list2):\n    # Write your code here\n    pass",
+      "java": "/**\n * Definition for singly-linked list.\n * public class ListNode { ... }\n */\nclass Solution {\n    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {\n        // Write your code here\n        return null;\n    }\n}",
+      "cpp": "/**\n * Definition for singly-linked list.\n * struct ListNode { ... };\n */\nclass Solution {\npublic:\n    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {\n        // Write your code here\n        return nullptr;\n    }\n};"
+    }
+  },
+  {
+    "id": 4,
+    "title": "Best Time to Buy and Sell Stock",
+    "difficulty": "Easy",
+    "description": "You are given an array prices where prices[i] is the price of a given stock on the ith day.\nYou want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock.",
+    "starter_code": {
+      "python": "def max_profit(prices):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int maxProfit(int[] prices) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int maxProfit(vector<int>& prices) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  },
+  {
+    "id": 5,
+    "title": "Valid Palindrome",
+    "difficulty": "Easy",
+    "description": "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward.",
+    "starter_code": {
+      "python": "def is_palindrome(s: str) -> bool:\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public boolean isPalindrome(String s) {\n        // Write your code here\n        return false;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    bool isPalindrome(string s) {\n        // Write your code here\n        return false;\n    }\n};"
+    }
+  },
+  {
+    "id": 6,
+    "title": "Reverse Linked List",
+    "difficulty": "Easy",
+    "description": "Given the head of a singly linked list, reverse the list, and return the reversed list.",
+    "starter_code": {
+      "python": "# class ListNode:\n#     def __init__(self, val=0, next=None):\n#         self.val = val\n#         self.next = next\ndef reverse_list(head):\n    # Write your code here\n    pass",
+      "java": "/**\n * Definition for singly-linked list.\n * public class ListNode { ... }\n */\nclass Solution {\n    public ListNode reverseList(ListNode head) {\n        // Write your code here\n        return null;\n    }\n}",
+      "cpp": "/**\n * Definition for singly-linked list.\n * struct ListNode { ... };\n */\nclass Solution {\npublic:\n    ListNode* reverseList(ListNode* head) {\n        // Write your code here\n        return nullptr;\n    }\n};"
+    }
+  },
+  {
+    "id": 7,
+    "title": "Maximum Subarray",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, find the subarray with the largest sum, and return its sum.",
+    "starter_code": {
+      "python": "def max_sub_array(nums):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int maxSubArray(int[] nums) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int maxSubArray(vector<int>& nums) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  },
+  {
+    "id": 8,
+    "title": "3Sum",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.",
+    "starter_code": {
+      "python": "def three_sum(nums):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public List<List<Integer>> threeSum(int[] nums) {\n        // Write your code here\n        return new ArrayList<>();\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    vector<vector<int>> threeSum(vector<int>& nums) {\n        // Write your code here\n        return {};\n    }\n};"
+    }
+  },
+  {
+    "id": 9,
+    "title": "Product of Array Except Self",
+    "difficulty": "Medium",
+    "description": "Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].\nYou must write an algorithm that runs in O(n) time and without using the division operation.",
+    "starter_code": {
+      "python": "def product_except_self(nums):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int[] productExceptSelf(int[] nums) {\n        // Write your code here\n        return new int[]{};\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    vector<int> productExceptSelf(vector<int>& nums) {\n        // Write your code here\n        return {};\n    }\n};"
+    }
+  },
+  {
+    "id": 10,
+    "title": "Coin Change",
+    "difficulty": "Medium",
+    "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.\nReturn the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.",
+    "starter_code": {
+      "python": "def coin_change(coins, amount):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int coinChange(int[] coins, int amount) {\n        // Write your code here\n        return -1;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int coinChange(vector<int>& coins, int amount) {\n        // Write your code here\n        return -1;\n    }\n};"
+    }
+  },
+  {
+    "id": 11,
+    "title": "Longest Substring Without Repeating Characters",
+    "difficulty": "Medium",
+    "description": "Given a string s, find the length of the longest substring without repeating characters.",
+    "starter_code": {
+      "python": "def length_of_longest_substring(s: str) -> int:\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int lengthOfLongestSubstring(String s) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int lengthOfLongestSubstring(string s) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  },
+  {
+    "id": 12,
+    "title": "Longest Palindromic Substring",
+    "difficulty": "Medium",
+    "description": "Given a string s, return the longest palindromic substring in s.",
+    "starter_code": {
+      "python": "def longest_palindrome(s: str) -> str:\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public String longestPalindrome(String s) {\n        // Write your code here\n        return \"\";\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    string longestPalindrome(string s) {\n        // Write your code here\n        return \"\";\n    }\n};"
+    }
+  },
+  {
+    "id": 13,
+    "title": "Container With Most Water",
+    "difficulty": "Medium",
+    "description": "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).\nFind two lines that together with the x-axis form a container, such that the container contains the most water.",
+    "starter_code": {
+      "python": "def max_area(height):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int maxArea(int[] height) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int maxArea(vector<int>& height) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  },
+  {
+    "id": 14,
+    "title": "Search in Rotated Sorted Array",
+    "difficulty": "Medium",
+    "description": "There is an integer array nums sorted in ascending order (with distinct values).\nPrior to being passed to your function, nums is possibly rotated at an unknown pivot index k. Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.",
+    "starter_code": {
+      "python": "def search(nums, target):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int search(int[] nums, int target) {\n        // Write your code here\n        return -1;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int search(vector<int>& nums, int target) {\n        // Write your code here\n        return -1;\n    }\n};"
+    }
+  },
+  {
+    "id": 15,
+    "title": "Group Anagrams",
+    "difficulty": "Medium",
+    "description": "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
+    "starter_code": {
+      "python": "def group_anagrams(strs):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public List<List<String>> groupAnagrams(String[] strs) {\n        // Write your code here\n        return new ArrayList<>();\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    vector<vector<string>> groupAnagrams(vector<string>& strs) {\n        // Write your code here\n        return {};\n    }\n};"
+    }
+  },
+  {
+    "id": 16,
+    "title": "Merge Intervals",
+    "difficulty": "Medium",
+    "description": "Given an array of intervals where intervals[i] = [starti, endi], merge all overlapping intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.",
+    "starter_code": {
+      "python": "def merge(intervals):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int[][] merge(int[][] intervals) {\n        // Write your code here\n        return new int[][]{};\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    vector<vector<int>> merge(vector<vector<int>>& intervals) {\n        // Write your code here\n        return {};\n    }\n};"
+    }
+  },
+  {
+    "id": 17,
+    "title": "Word Search",
+    "difficulty": "Medium",
+    "description": "Given an m x n grid of characters board and a string word, return true if word exists in the grid.\nThe word can be constructed from letters of sequentially adjacent cells, where adjacent cells are horizontally or vertically neighboring.",
+    "starter_code": {
+      "python": "def exist(board, word):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public boolean exist(char[][] board, String word) {\n        // Write your code here\n        return false;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    bool exist(vector<vector<char>>& board, string word) {\n        // Write your code here\n        return false;\n    }\n};"
+    }
+  },
+  {
+    "id": 18,
+    "title": "Number of Islands",
+    "difficulty": "Medium",
+    "description": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands.\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.",
+    "starter_code": {
+      "python": "def num_islands(grid):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int numIslands(char[][] grid) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int numIslands(vector<vector<char>>& grid) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  },
+  {
+    "id": 19,
+    "title": "LRU Cache",
+    "difficulty": "Medium",
+    "description": "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache.\nImplement the LRUCache class: `LRUCache(int capacity)` Initialize the LRU cache with positive size capacity. `int get(int key)` Return the value of the key if the key exists, otherwise return -1. `void put(int key, int value)` Update the value of the key if the key exists. Otherwise, add the key-value pair to the cache.",
+    "starter_code": {
+      "python": "class LRUCache:\n    def __init__(self, capacity: int):\n        pass\n    def get(self, key: int) -> int:\n        return -1\n    def put(self, key: int, value: int) -> None:\n        pass",
+      "java": "class LRUCache {\n    public LRUCache(int capacity) {\n    }\n    public int get(int key) {\n        return -1;\n    }\n    public void put(int key, int value) {\n    }\n}",
+      "cpp": "class LRUCache {\npublic:\n    LRUCache(int capacity) {\n    }\n    int get(int key) {\n        return -1;\n    }\n    void put(int key, int value) {\n    }\n};"
+    }
+  },
+  {
+    "id": 20,
+    "title": "Trapping Rain Water",
+    "difficulty": "Hard",
+    "description": "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "starter_code": {
+      "python": "def trap(height):\n    # Write your code here\n    pass",
+      "java": "class Solution {\n    public int trap(int[] height) {\n        // Write your code here\n        return 0;\n    }\n}",
+      "cpp": "class Solution {\npublic:\n    int trap(vector<int>& height) {\n        // Write your code here\n        return 0;\n    }\n};"
+    }
+  }
+]

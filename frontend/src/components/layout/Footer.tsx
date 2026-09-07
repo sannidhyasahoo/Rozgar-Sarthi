@@ -1,8 +1,18 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Cpu, Terminal, Shield, GitFork, Activity } from "lucide-react";
 
 export function Footer() {
+  const pathname = usePathname();
+
+  // Suppress footer on dashboard and full-screen assessment environments
+  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/coding/assessment")) {
+    return null;
+  }
+
   return (
     <footer className="bg-zinc-100 border-t border-zinc-200 mt-24">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12">

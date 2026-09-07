@@ -1,437 +1,268 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAppAuth } from "@/components/auth/AuthProvider";
-import { MonoEyebrow } from "@/components/shared/MonoEyebrow";
-import { SAMPLE_CODING_CHALLENGES } from "@/lib/mock-data";
-import { CodingChallenge, ReasoningTrajectoryStep } from "@/lib/types";
-import { saveSessionToHistory, saveStoredProfile } from "@/lib/storage";
 import {
   Code2,
-  Play,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  Terminal,
   Zap,
+  Brain,
+  Target,
+  CheckCircle2,
   ArrowRight,
-  HelpCircle,
-  Layers,
-  Sparkles,
+  Loader2,
+  Play,
+  Database,
+  GitBranch,
+  Cpu,
 } from "lucide-react";
+import { startAssessment } from "@/lib/codingApi";
 
-export default function CodingRoundPage() {
+const FEATURES = [
+  {
+    icon: Code2,
+    title: "Monaco Editor",
+    desc: "VS Code-powered editor with syntax highlighting and autocomplete",
+  },
+  {
+    icon: Database,
+    title: "Hidden Test Cases",
+    desc: "Secure execution against visible + hidden test cases you can't see",
+  },
+  {
+    icon: Brain,
+    title: "Adaptive Selection",
+    desc: "Questions selected dynamically based on your demonstrated skill profile",
+  },
+  {
+    icon: Zap,
+    title: "AST Analysis",
+    desc: "Tree-sitter parses your code to detect complexity signals and patterns",
+  },
+  {
+    icon: GitBranch,
+    title: "15 Canonical Problems",
+    desc: "From Two Sum to Course Schedule — spanning arrays, graphs, and DP",
+  },
+  {
+    icon: Target,
+    title: "Candidate Report",
+    desc: "Evidence-backed report with skill profile and hiring calibration",
+  },
+];
+
+const PROBLEMS_PREVIEW = [
+  { title: "Two Sum", tag: "Easy", skills: "Arrays · Hashmap" },
+  { title: "Longest Substring", tag: "Medium", skills: "Sliding Window · Hashmap" },
+  { title: "Coin Change", tag: "Medium", skills: "Dynamic Programming" },
+  { title: "Course Schedule", tag: "Hard", skills: "Graphs · Topological Sort" },
+];
+
+export default function CodingHubPage() {
   const router = useRouter();
-  const { profile, setProfile } = useAppAuth();
+  const [isStarting, setIsStarting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [questions, setQuestions] = useState(7);
 
-  const [selectedChallenge, setSelectedChallenge] = useState<CodingChallenge>(
-    SAMPLE_CODING_CHALLENGES[0]
-  );
-  const [selectedLang, setSelectedLang] = useState<"python" | "typescript" | "go">("python");
-  const [code, setCode] = useState<string>(selectedChallenge.starterCode.python);
-  const [approachNotes, setApproachNotes] = useState(
-    "Using a Hash Map (lookup table) paired with a Doubly Linked List. The doubly linked list maintains the LRU access order in O(1), while each node stores an `expires_at` timestamp in seconds."
-  );
-  const [complexityTime, setComplexityTime] = useState("O(1) average for get and put");
-  const [complexitySpace, setComplexitySpace] = useState("O(capacity) space bound");
-
-  const [runningTests, setRunningTests] = useState(false);
-  const [testResults, setTestResults] = useState<{
-    passed: boolean;
-    output: string;
-    details: { caseId: number; status: "pass" | "fail"; runtime: string }[];
-  } | null>(null);
-
-  const [trajectorySteps, setTrajectorySteps] = useState<ReasoningTrajectoryStep[]>([
-    {
-      id: "step_1",
-      phase: "approach",
-      title: "Approach Formulated",
-      content: "Selected Doubly Linked List + Hash Map to guarantee strict O(1) mutations.",
-      timestamp: "00:02:15",
-      status: "success",
-    },
-    {
-      id: "step_2",
-      phase: "complexity",
-      title: "Complexity Hypothesis",
-      content: "Hypothesized Time O(1) & Space O(N) bounded by capacity.",
-      timestamp: "00:04:30",
-      status: "success",
-    },
-  ]);
-
-  const [counterResponse, setCounterResponse] = useState("");
-  const [counterAnswered, setCounterAnswered] = useState(false);
-
-  const handleLanguageChange = (lang: "python" | "typescript" | "go") => {
-    setSelectedLang(lang);
-    setCode(selectedChallenge.starterCode[lang]);
-  };
-
-  const handleRunTests = () => {
-    setRunningTests(true);
-    setTestResults(null);
-
-    setTimeout(() => {
-      setRunningTests(false);
-      setTestResults({
-        passed: true,
-        output: "All 3 sample test cases and 5 hidden edge cases passed successfully.",
-        details: [
-          { caseId: 1, status: "pass", runtime: "0.14ms" },
-          { caseId: 2, status: "pass", runtime: "0.22ms" },
-          { caseId: 3, status: "pass", runtime: "0.18ms" },
-        ],
-      });
-
-      setTrajectorySteps((prev) => [
-        ...prev,
-        {
-          id: `step_${Date.now()}`,
-          phase: "test_execution",
-          title: "Test Execution & Edge Checks",
-          content: "Passed all standard capacity eviction tests and TTL expiry checks.",
-          timestamp: new Date().toLocaleTimeString(),
-          status: "success",
-        },
-      ]);
-    }, 800);
-  };
-
-  const handleAnswerCounterExample = () => {
-    if (!counterResponse.trim()) return;
-    setCounterAnswered(true);
-
-    setTrajectorySteps((prev) => [
-      ...prev,
-      {
-        id: `step_probe_${Date.now()}`,
-        phase: "counter_example_probe",
-        title: "Counterexample Stress Probe Resolved",
-        content: `Candidate reasoned: "${counterResponse.slice(0, 100)}..."`,
-        timestamp: new Date().toLocaleTimeString(),
-        status: "info",
-      },
-    ]);
-  };
-
-  const handleFinishCoding = () => {
-    const updatedComp = {
-      technical_depth: Math.min(0.95, (profile.competencies?.technical_depth || 0.7) + 0.06),
-      system_design: Math.min(0.95, (profile.competencies?.system_design || 0.65) + 0.05),
-      problem_solving: Math.min(0.98, (profile.competencies?.problem_solving || 0.75) + 0.08),
-      communication_clarity: profile.competencies?.communication_clarity || 0.7,
-      ownership_specificity: Math.min(0.95, (profile.competencies?.ownership_specificity || 0.65) + 0.04),
-    };
-
-    saveStoredProfile({ competencies: updatedComp });
-    setProfile({ competencies: updatedComp });
-
-    saveSessionToHistory({
-      session_id: `coding-session-${Date.now()}`,
-      candidate_name: profile.name,
-      target_role: profile.targetRole,
-      last_updated: new Date().toISOString(),
-      duration_minutes: 35,
-      overall_score: 0.88,
-      competencies: updatedComp,
-      evidence_log: [
-        {
-          turn_id: 1,
-          competency: "Data Structure Selection",
-          quote: "Chose Doubly Linked List + Hash Map to guarantee O(1) key promotion and eviction.",
-          signal: "substantiated",
-          observation: "Optimal approach formulation with strict asymptotic complexity awareness.",
-          pressure_level: 2,
-        },
-        {
-          turn_id: 2,
-          competency: "Concurrency & Clock Drift Defense",
-          quote: counterResponse || "Used monotonic clock time (`time.monotonic()`) rather than wall clock.",
-          signal: "substantiated",
-          observation: "Demonstrated production-grade resilience against NTP skew and clock adjustments.",
-          pressure_level: 5,
-        },
-      ],
-      identified_strengths: [
-        "Flawless O(1) doubly linked list node pointer manipulation.",
-        "Demonstrated deep understanding of monotonic time vs wall-clock skew in distributed systems.",
-      ],
-      areas_for_improvement: [
-        "Consider discussing active memory reclamation thread pool trade-offs versus lazy eviction.",
-      ],
-      actionable_tips: [
-        "In production caches, pair lazy TTL checks with a probabilistic sampled background cleaner (like Redis `activeExpireCycle`).",
-      ],
-      reasoning_trajectory: trajectorySteps,
-    });
-
-    router.push("/report");
+  const handleStart = async () => {
+    setIsStarting(true);
+    setError(null);
+    try {
+      const state = await startAssessment(questions);
+      router.push(`/coding/assessment/${state.assessmentId}`);
+    } catch (err) {
+      setError("Failed to start assessment. Make sure the backend is running.");
+      setIsStarting(false);
+    }
   };
 
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl dev-card">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-cobalt/10 border border-cobalt/20 flex items-center justify-center text-cobalt">
-            <Code2 className="w-5 h-5 stroke-[1.8]" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-sm text-zinc-900">
-                AI Coding Round • Reasoning Trajectory Mode
-              </span>
-              <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-cobalt/10 text-cobalt border border-cobalt/20 font-bold">
-                DIFFICULTY: {selectedChallenge.difficulty.toUpperCase()}
-              </span>
-            </div>
-            <p className="text-xs text-zinc-500 font-mono">
-              Problem: {selectedChallenge.title} • Time Limit: {selectedChallenge.timeLimitMinutes} min
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleFinishCoding}
-            className="btn-primary-action !py-2 !px-4 !text-xs shadow-sm !bg-zinc-900 hover:!bg-zinc-800"
-          >
-            <span>Submit Solution & View Report</span>
-            <ArrowRight className="w-4 h-4 stroke-[2]" />
-          </button>
-        </div>
-      </div>
-
-      {/* Main 2-Column Workspace */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Problem & Reasoning Trajectory (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          {/* Problem Statement Card */}
-          <div className="dev-card p-5 space-y-4">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
-              <h2 className="text-base font-bold text-zinc-900">
-                {selectedChallenge.title}
-              </h2>
-              <span className="font-mono text-xs text-zinc-500">
-                Track: {selectedChallenge.track}
-              </span>
-            </div>
-
-            <div className="text-xs text-zinc-700 leading-relaxed whitespace-pre-wrap font-sans">
-              {selectedChallenge.description}
-            </div>
-
-            {/* Constraints */}
-            <div className="p-3 rounded-lg bg-zinc-50 border border-zinc-200 text-xs space-y-1">
-              <span className="font-mono text-[10px] uppercase text-zinc-500 font-bold block">
-                Constraints:
-              </span>
-              <ul className="space-y-1 text-zinc-600 font-mono text-[11px]">
-                {selectedChallenge.constraints.map((c, i) => (
-                  <li key={i}>• {c}</li>
-                ))}
-              </ul>
-            </div>
+    <div className="min-h-screen bg-[#fafafa]">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-[#0f0f10] text-white py-20">
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background:
+              "radial-gradient(ellipse 60% 50% at 50% -10%, #6a5ed9 0%, transparent 70%)",
+          }}
+        />
+        <div className="relative max-w-3xl mx-auto px-6 text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#6a5ed9]/10 border border-[#6a5ed9]/20 text-[#6a5ed9] text-xs font-mono font-bold">
+            <Cpu className="w-3.5 h-3.5" />
+            Adaptive AI Coding Assessment
           </div>
 
-          {/* Reasoning Trajectory Logger */}
-          <div className="dev-card p-5 space-y-3">
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-2.5">
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-iris" />
-                <span className="font-bold text-xs text-zinc-900">
-                  Candidate Reasoning Trajectory
-                </span>
-              </div>
-              <span className="font-mono text-[10px] text-zinc-400">
-                {trajectorySteps.length} Steps Recorded
-              </span>
-            </div>
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight">
+            Prove Your Skills.
+            <br />
+            <span
+              style={{
+                background: "linear-gradient(135deg, #6a5ed9, #3f71d4)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Not Your Luck.
+            </span>
+          </h1>
 
-            <div className="space-y-2">
-              {trajectorySteps.map((step) => (
-                <div
-                  key={step.id}
-                  className="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 text-xs space-y-0.5"
+          <p className="text-zinc-400 text-lg leading-relaxed max-w-xl mx-auto">
+            An adaptive coding engine that selects problems based on your demonstrated
+            skills — not randomly. Code in Monaco, executed against hidden tests, analyzed
+            with Tree-sitter.
+          </p>
+
+          {/* Configuration */}
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center gap-2 bg-[#1a1a1e] border border-[#2a2a2e] rounded-lg px-4 py-2">
+              <span className="text-zinc-500 text-sm font-mono">Questions:</span>
+              {[5, 7, 10].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setQuestions(n)}
+                  className={`w-7 h-7 rounded text-sm font-bold font-mono transition-all ${
+                    questions === n
+                      ? "bg-[#6a5ed9] text-white"
+                      : "text-zinc-500 hover:text-zinc-300"
+                  }`}
                 >
-                  <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-iris font-bold uppercase">{step.title}</span>
-                    <span className="text-zinc-400">{step.timestamp}</span>
-                  </div>
-                  <p className="text-zinc-700 text-[11px] leading-snug">{step.content}</p>
-                </div>
+                  {n}
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Adaptive Counterexample Stress Probe */}
-          <div className="dev-card p-5 space-y-3 border-coral/40 bg-coral/5">
-            <div className="flex items-center gap-2 text-coral font-mono font-bold text-xs">
-              <Zap className="w-4 h-4" />
-              <span>ADAPTIVE STRESS PROBE (COUNTEREXAMPLE)</span>
-            </div>
-
-            <div className="text-xs text-zinc-800 space-y-1">
-              <div className="font-bold">
-                {selectedChallenge.counterExamples[0].title}
-              </div>
-              <p className="text-zinc-600 text-[11px] leading-relaxed">
-                {selectedChallenge.counterExamples[0].scenario}
-              </p>
-              <p className="font-semibold text-zinc-900 pt-1 text-[11px]">
-                {selectedChallenge.counterExamples[0].probeQuestion}
-              </p>
-            </div>
-
-            {!counterAnswered ? (
-              <div className="space-y-2 pt-1">
-                <textarea
-                  rows={3}
-                  value={counterResponse}
-                  onChange={(e) => setCounterResponse(e.target.value)}
-                  placeholder="Explain your mitigation (e.g. using monotonic clocks, active background sampling)..."
-                  className="w-full p-2 text-xs rounded-lg border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-iris/20 bg-white"
-                />
-                <button
-                  onClick={handleAnswerCounterExample}
-                  className="btn-primary-action !py-1.5 !px-3 !text-xs !bg-coral hover:!bg-coral/90"
-                >
-                  <span>Submit Stress-Probe Defense</span>
-                </button>
-              </div>
+          <button
+            id="start-assessment-btn"
+            onClick={handleStart}
+            disabled={isStarting}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#6a5ed9] hover:bg-[#7b6fe0] text-white font-bold text-lg transition-all disabled:opacity-50 shadow-lg shadow-[#6a5ed9]/20"
+          >
+            {isStarting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Starting Assessment…
+              </>
             ) : (
-              <div className="p-2.5 rounded-lg bg-sprout/10 border border-sprout/20 text-xs text-sprout font-mono">
-                ✓ Defense recorded and integrated into Candidate Evidence Graph.
-              </div>
+              <>
+                <Play className="w-5 h-5 fill-current" />
+                Start Coding Assessment
+              </>
             )}
-          </div>
+          </button>
+
+          {error && (
+            <p className="text-red-400 text-sm bg-red-950/20 border border-red-900/30 rounded-lg px-4 py-2 inline-block">
+              {error}
+            </p>
+          )}
+
+          <p className="text-zinc-600 text-xs font-mono">
+            {questions} questions · 60 min · Python, JavaScript, C++
+          </p>
         </div>
+      </section>
 
-        {/* Right Column: Code Editor & Test Console (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          {/* Approach & Complexity Formulation Bar */}
-          <div className="dev-card p-4 space-y-3">
-            <div className="text-xs font-mono font-bold text-zinc-700 uppercase">
-              1. Approach Formulation & Complexity Hypothesis
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] font-mono text-zinc-500 mb-1">
-                  Time Complexity (Expected)
-                </label>
-                <input
-                  type="text"
-                  value={complexityTime}
-                  onChange={(e) => setComplexityTime(e.target.value)}
-                  className="w-full px-2.5 py-1.5 text-xs rounded border border-zinc-200 font-mono"
-                />
+      {/* Features */}
+      <section className="max-w-5xl mx-auto px-6 py-16">
+        <h2 className="text-center text-2xl font-bold text-zinc-900 mb-10">
+          Built differently from other coding platforms
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {FEATURES.map((f) => (
+            <div
+              key={f.title}
+              className="dev-card p-5 space-y-3 hover:border-zinc-300 transition-colors"
+            >
+              <div className="w-9 h-9 rounded-lg bg-[#6a5ed9]/10 border border-[#6a5ed9]/20 flex items-center justify-center">
+                <f.icon className="w-4.5 h-4.5 text-[#6a5ed9]" />
               </div>
-              <div>
-                <label className="block text-[10px] font-mono text-zinc-500 mb-1">
-                  Space Complexity (Expected)
-                </label>
-                <input
-                  type="text"
-                  value={complexitySpace}
-                  onChange={(e) => setComplexitySpace(e.target.value)}
-                  className="w-full px-2.5 py-1.5 text-xs rounded border border-zinc-200 font-mono"
-                />
-              </div>
+              <h3 className="font-bold text-zinc-900 text-sm">{f.title}</h3>
+              <p className="text-xs text-zinc-500 leading-relaxed">{f.desc}</p>
             </div>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          {/* Code Editor Surface */}
-          <div className="rounded-xl bg-zinc-950 border border-zinc-800 text-zinc-100 overflow-hidden shadow-xl">
-            {/* Editor Toolbar */}
-            <div className="px-4 py-2.5 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 mr-2">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+      {/* Problem preview */}
+      <section className="bg-[#f4f4f5] border-t border-zinc-200 py-14">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-xl font-bold text-zinc-900 mb-2">
+            15 canonical problems
+          </h2>
+          <p className="text-sm text-zinc-500 mb-8">
+            Carefully curated to test foundational algorithmic skills. Which ones you see depends on your performance.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {PROBLEMS_PREVIEW.map((p) => (
+              <div
+                key={p.title}
+                className="dev-card px-4 py-3 flex items-center justify-between"
+              >
+                <div>
+                  <div className="text-sm font-medium text-zinc-800">{p.title}</div>
+                  <div className="text-xs text-zinc-500 font-mono">{p.skills}</div>
                 </div>
-                <span className="font-mono text-xs text-zinc-400 font-medium">
-                  solution.{selectedLang === "python" ? "py" : selectedLang === "typescript" ? "ts" : "go"}
+                <span
+                  className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded border uppercase ${
+                    p.tag === "Easy"
+                      ? "text-emerald-600 bg-emerald-50 border-emerald-200"
+                      : p.tag === "Medium"
+                      ? "text-amber-600 bg-amber-50 border-amber-200"
+                      : "text-red-600 bg-red-50 border-red-200"
+                  }`}
+                >
+                  {p.tag}
                 </span>
               </div>
-
-              {/* Language Switcher */}
-              <div className="flex items-center gap-1 font-mono text-xs">
-                {(["python", "typescript", "go"] as const).map((lang) => (
-                  <button
-                    key={lang}
-                    onClick={() => handleLanguageChange(lang)}
-                    className={`px-2.5 py-1 rounded text-[11px] capitalize transition-colors ${
-                      selectedLang === lang
-                        ? "bg-iris text-white font-bold"
-                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
-                    }`}
-                  >
-                    {lang}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Code Input */}
-            <textarea
-              rows={18}
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              className="w-full p-4 font-mono text-xs bg-zinc-950 text-emerald-300 focus:outline-none resize-none leading-relaxed selection:bg-iris/30"
-              spellCheck={false}
-            />
-
-            {/* Run Button Bar */}
-            <div className="p-3 bg-zinc-900 border-t border-zinc-800 flex items-center justify-between">
-              <div className="font-mono text-[11px] text-zinc-500">
-                Evaluates O(1) access & eviction resilience
-              </div>
-              <button
-                onClick={handleRunTests}
-                disabled={runningTests}
-                className="btn-primary-action !py-2 !px-5 !text-xs !bg-sprout hover:!bg-emerald-600 shadow-sm"
-              >
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>{runningTests ? "Executing Tests..." : "Run Test Suite"}</span>
-              </button>
+            ))}
+            <div className="dev-card px-4 py-3 flex items-center gap-2 text-zinc-400 text-sm col-span-full sm:col-span-2">
+              <span>+11 more problems across arrays, trees, graphs, and DP</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-auto" />
             </div>
           </div>
-
-          {/* Test Results Console */}
-          {testResults && (
-            <div className="dev-card p-4 space-y-3 bg-zinc-900 border-zinc-800 text-zinc-200">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                <div className="flex items-center gap-2 font-mono text-xs font-bold text-lime">
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>ALL TEST CASES PASSED</span>
-                </div>
-                <span className="font-mono text-[11px] text-zinc-400">Total Latency: 0.54ms</span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 text-xs font-mono">
-                {testResults.details.map((d) => (
-                  <div
-                    key={d.caseId}
-                    className="p-2 rounded bg-zinc-950 border border-zinc-800 flex items-center justify-between"
-                  >
-                    <span className="text-zinc-400">Case #{d.caseId}</span>
-                    <span className="text-lime">{d.runtime}</span>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-[11px] text-zinc-400 font-mono">
-                {testResults.output}
-              </p>
-            </div>
-          )}
         </div>
-      </div>
+      </section>
+
+      {/* How it works */}
+      <section className="max-w-4xl mx-auto px-6 py-16">
+        <h2 className="text-xl font-bold text-zinc-900 mb-8">How adaptive selection works</h2>
+        <div className="space-y-4">
+          {[
+            { step: "1", title: "Start with Easy", desc: "First question is always foundational — Arrays or Strings." },
+            { step: "2", title: "Code & Submit", desc: "Your code runs in an isolated subprocess against visible + hidden tests." },
+            { step: "3", title: "AST Analysis", desc: "Tree-sitter parses your code to detect nested loops, recursion, data structures, and complexity signals." },
+            { step: "4", title: "Profile Update", desc: "Your skill profile updates deterministically based on pass rate, efficiency, and attempt count." },
+            { step: "5", title: "Adaptive Selection", desc: "Next question is chosen to maximize information about weak and uncertain skills." },
+            { step: "6", title: "Evidence Report", desc: "Final report maps every score claim back to recorded execution evidence." },
+          ].map((item) => (
+            <div key={item.step} className="flex gap-4 items-start">
+              <div className="w-7 h-7 rounded-full bg-[#6a5ed9] text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                {item.step}
+              </div>
+              <div>
+                <div className="text-sm font-bold text-zinc-800">{item.title}</div>
+                <div className="text-xs text-zinc-500 leading-relaxed">{item.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <button
+            onClick={handleStart}
+            disabled={isStarting}
+            className="btn-primary-action gap-2"
+          >
+            {isStarting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4" />
+            )}
+            Begin Assessment
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

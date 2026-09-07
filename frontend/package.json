@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.0",
+    "@monaco-editor/react": "^4.7.0",
     "@swc/helpers": "^0.5.23",
+    "@tailwindcss/typography": "^0.5.20",
     "@vapi-ai/web": "^2.6.3",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
@@ -18,6 +20,7 @@
     "next": "^15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
     "tailwind-merge": "^3.0.2"
   },
   "devDependencies": {

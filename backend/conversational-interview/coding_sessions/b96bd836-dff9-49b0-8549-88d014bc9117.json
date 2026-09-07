@@ -1,0 +1,524 @@
+{
+  "id": "b96bd836-dff9-49b0-8549-88d014bc9117",
+  "createdAt": "2026-09-03T07:35:13.462780",
+  "updatedAt": "2026-09-03T07:49:23.330959",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-03T07:35:13.462780",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-03T07:35:13.477139",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "e5fc5cdb-1ed8-4ebd-96c7-c1938bf5e9c1",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here fje\n        fkerm\n        return {};\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:42:01.729798",
+          "isRun": false,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 10,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(1)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.75,
+            "signals": [
+              "hashmap_usage",
+              "set_usage"
+            ],
+            "dataStructures": [
+              "hashmap",
+              "set"
+            ],
+            "hasRecursion": false,
+            "functionCount": 0,
+            "loopDepth": 0
+          }
+        },
+        {
+          "id": "40a0183e-c451-430d-a6ec-23d63ceca295",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here fje\n        fkerm\n        return {};\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:42:04.092494",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "b043bb85-2799-4f19-ad85-c188b6f8d343",
+          "questionId": "two-sum",
+          "attemptNumber": 2,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:12.357973",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "f6450a8e-8fd8-438e-8569-186d0dd65120",
+          "questionId": "two-sum",
+          "attemptNumber": 3,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:15.335789",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "dc872330-5806-42e5-8473-81a76ef79df2",
+          "questionId": "two-sum",
+          "attemptNumber": 4,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:16.379626",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "ce0b538e-f3d0-4940-98bb-7ab96814fb81",
+          "questionId": "two-sum",
+          "attemptNumber": 5,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:20.525706",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "f149e547-c8d9-4422-8cd4-239ed87fd362",
+          "questionId": "two-sum",
+          "attemptNumber": 6,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:45.535390",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "1fcfcae1-8a13-4bb3-8d77-5ec7fcdd50ed",
+          "questionId": "two-sum",
+          "attemptNumber": 7,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n",
+          "submittedAt": "2026-09-03T07:46:46.593088",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "0da4bef4-5322-4a66-a45b-1d0964274b40",
+          "questionId": "two-sum",
+          "attemptNumber": 8,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:21.484676",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "d7906960-5c33-40de-939f-dc393dcb714d",
+          "questionId": "two-sum",
+          "attemptNumber": 9,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:21.579696",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "4600f476-fbbd-4f11-96fe-c174291c469b",
+          "questionId": "two-sum",
+          "attemptNumber": 10,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:21.697181",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "e4663be6-2a61-410b-b436-b1f410238996",
+          "questionId": "two-sum",
+          "attemptNumber": 11,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:21.897683",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "fb619475-717d-4816-b396-e809c3e95894",
+          "questionId": "two-sum",
+          "attemptNumber": 12,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:22.542490",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "fcf4213c-0d05-4ebc-a03c-90ce9e9546dc",
+          "questionId": "two-sum",
+          "attemptNumber": 13,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:22.711715",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "a92a4d31-390c-4483-bf8f-9c1f88dc6e5f",
+          "questionId": "two-sum",
+          "attemptNumber": 14,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:22.853152",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "9c1cc70c-44f6-49f9-a4ac-de5504dc195c",
+          "questionId": "two-sum",
+          "attemptNumber": 15,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:22.997159",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "c2a3a6d2-d41b-4e9e-91db-154b08537533",
+          "questionId": "two-sum",
+          "attemptNumber": 16,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:23.131056",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "38ddae6d-75a9-4c5a-a551-02e23a45c2ee",
+          "questionId": "two-sum",
+          "attemptNumber": 17,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\n#include <bits/stdc++.h>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\nmap<int, int> mpp;\nvector<int> ans(2, 0);\nfor(auto i = 0; i < nums.size(); i++) mpp[nums[i]] = i;\n\nfor(auto i : nums){\n    if(mpp.count(target - i)){\n        ans[0] = mpp[target - i];\n        ans[1] = mpp[i];\n    }\n}\nreturn ans;\n    }\n};\n\n",
+          "submittedAt": "2026-09-03T07:49:23.330959",
+          "isRun": true,
+          "executionResult": {
+            "status": "COMPILE_ERROR",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 0.0,
+            "memoryKb": 0.0,
+            "compileError": "Language 'cpp' not supported in this MVP.",
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": null
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 1
+    }
+  ],
+  "skillProfile": {
+    "arrays": 42.0,
+    "strings": 50.0,
+    "hashmaps": 42.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 40.0,
+    "speed": 54.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 45.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

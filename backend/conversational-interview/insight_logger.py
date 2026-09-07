@@ -6,9 +6,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from llm_factory import get_planner_llm
 
 TIPS_PROMPT = """
-Based on the following missing concepts or weaknesses from an interview, provide 1-2 actionable tips for the candidate. Keep them brief.
+Based on the following weaknesses from an interview, provide 1-2 actionable tips for the candidate. Keep them brief.
 
-Missing Concepts: {missing_concepts}
 Weaknesses: {weaknesses}
 
 Return ONLY a JSON array of strings. Example: ["Tip 1", "Tip 2"]
@@ -36,18 +35,14 @@ async def save_session_insights(call_id: str, state: dict):
         elif e_dict.get("signal") in ["negative", "unsubstantiated"]:
             weaknesses.append(f"Lacked evidence in {e_dict.get('competency')}: {e_dict.get('quote')}")
 
-    latest_eval = state.get("latest_evaluation")
-    missing_concepts = latest_eval.concepts_missing if latest_eval else []
-    
     tips = []
-    if missing_concepts or weaknesses:
+    if weaknesses:
         llm = get_planner_llm()
         prompt = ChatPromptTemplate.from_template(TIPS_PROMPT)
         # For background tasks, we can use invoke synchronously or ainvoke
         try:
             # simple json extraction
             response = await (prompt | llm).ainvoke({
-                "missing_concepts": ", ".join(missing_concepts),
                 "weaknesses": " | ".join(weaknesses[:3]) # Send top 3
             })
             content = response.content.strip()

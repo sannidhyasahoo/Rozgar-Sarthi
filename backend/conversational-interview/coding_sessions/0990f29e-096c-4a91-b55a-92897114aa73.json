@@ -1,0 +1,31 @@
+{
+  "id": "0990f29e-096c-4a91-b55a-92897114aa73",
+  "createdAt": "2026-09-03T03:29:33.139579",
+  "updatedAt": "2026-09-03T03:29:33.139579",
+  "status": "active",
+  "totalQuestions": 5,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-03T03:29:33.139579",
+  "timeLimitMinutes": 60,
+  "questions": [],
+  "skillProfile": {
+    "arrays": 50.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 50.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 50.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

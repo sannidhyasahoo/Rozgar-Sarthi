@@ -12,12 +12,17 @@ from engine import create_interview_engine
 from simulate_interview import print_telemetry
 from insight_logger import save_session_insights
 from resume_parser import extract_text_from_pdf, parse_resume_to_profile
+from coding_api import router as coding_router
+from report_api import router as report_router
 
 # Set up logging for FastAPI to show our telemetry
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="Rozgar Sarthi Voice Bridge")
+
+app.include_router(coding_router, prefix="/api/coding", tags=["coding"])
+app.include_router(report_router, prefix="/api/reports", tags=["reports"])
 
 app.add_middleware(
     CORSMiddleware,
