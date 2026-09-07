@@ -7,7 +7,7 @@ export default function AssessmentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="fixed inset-0 z-50 bg-[#0f0f10]">
+    <div className="fixed inset-0 z-50 overflow-hidden">
       {children}
     </div>
   );

@@ -24,6 +24,8 @@ import tempfile
 import os
 import time
 import sys
+import json
+import shutil
 from typing import Any
 
 from coding_session_store import ExecutionResult
@@ -40,6 +42,8 @@ BLOCKED_IMPORTS_PYTHON = [
 ]
 
 PYTHON_EXEC = sys.executable  # use same Python that's running the backend
+NODE_EXEC = shutil.which("node") or r"C:\Program Files\nodejs\node.exe"
+CPP_COMPILER = shutil.which("g++") or r"C:\MinGW\bin\g++.exe"
 
 
 # ─── Tree / Build Helper ──────────────────────────────────────────────────────
@@ -344,6 +348,18 @@ def _build_js_harness(problem: dict, candidate_code: str, test_cases: list[dict]
                 f"results.push({{idx:{idx}, passed: _r === {json_val(expected)}, got: _r, expected: {json_val(expected)}}}); }}"
                 f" catch(e) {{ results.push({{idx:{idx}, passed:false, error:e.message}}); }}"
             )
+        elif problem_id == "binary-tree-level-order":
+            calls.append(
+                f"try {{ var _r = levelOrder(_buildTree({json_val(inp['tree'])})); "
+                f"results.push({{idx:{idx}, passed: JSON.stringify(_r) === JSON.stringify({json_val(expected)}), got: _r, expected: {json_val(expected)}}}); }}"
+                f" catch(e) {{ results.push({{idx:{idx}, passed:false, error:e.message}}); }}"
+            )
+        elif problem_id == "lowest-common-ancestor":
+            calls.append(
+                f"try {{ var _r = lowestCommonAncestor(_buildTree({json_val(inp['tree'])}), {json_val(inp['p'])}, {json_val(inp['q'])}); "
+                f"results.push({{idx:{idx}, passed: _r === {json_val(expected)}, got: _r, expected: {json_val(expected)}}}); }}"
+                f" catch(e) {{ results.push({{idx:{idx}, passed:false, error:e.message}}); }}"
+            )
         elif problem_id == "coin-change":
             calls.append(
                 f"try {{ var _r = coinChange({json_val(inp['coins'])}, {json_val(inp['amount'])}); "
@@ -372,15 +388,372 @@ def _build_js_harness(problem: dict, candidate_code: str, test_cases: list[dict]
             calls.append(f"results.push({{idx:{idx}, passed:false, error:'Unknown problem'}});")
 
     joined_calls = "\n".join(calls)
+    tree_helpers = """
+function TreeNode(val, left, right) {
+    this.val = (val === undefined ? 0 : val);
+    this.left = (left === undefined ? null : left);
+    this.right = (right === undefined ? null : right);
+}
+
+function _buildTree(arr) {
+    if (!arr || arr.length === 0 || arr[0] === null) return null;
+    var root = new TreeNode(arr[0]);
+    var queue = [root];
+    var i = 1;
+    while (queue.length > 0 && i < arr.length) {
+        var node = queue.shift();
+        if (i < arr.length && arr[i] !== null && arr[i] !== undefined) {
+            node.left = new TreeNode(arr[i]);
+            queue.push(node.left);
+        }
+        i++;
+        if (i < arr.length && arr[i] !== null && arr[i] !== undefined) {
+            node.right = new TreeNode(arr[i]);
+            queue.push(node.right);
+        }
+        i++;
+    }
+    return root;
+}
+"""
     return (
         f"var results = [];\n"
+        f"{tree_helpers}\n"
         f"{candidate_code}\n"
         f"{joined_calls}\n"
         f"console.log(JSON.stringify(results));"
     )
 
 
-import json as _json  # already imported above, explicit for clarity in harness builder
+# ─── C++ Harness Builder ──────────────────────────────────────────────────────
+
+def _cpp_quote(s: str) -> str:
+    out = ""
+    for c in s:
+        if c == '"':
+            out += '\\"'
+        elif c == '\\':
+            out += '\\\\'
+        else:
+            out += c
+    return f'"{out}"'
+
+
+def _cpp_literal(v: Any) -> str:
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    elif isinstance(v, (int, float)):
+        return str(v)
+    elif isinstance(v, str):
+        return _cpp_quote(v)
+    elif isinstance(v, list):
+        items = [_cpp_literal(x) for x in v]
+        return "{" + ", ".join(items) + "}"
+    elif v is None:
+        return '"null"'
+    return str(v)
+
+
+def _tree_to_cpp_vec(arr: list) -> str:
+    parts = []
+    for x in arr:
+        if x is None:
+            parts.append('"null"')
+        else:
+            parts.append(f'"{x}"')
+    return "{" + ", ".join(parts) + "}"
+
+
+def _grid_to_cpp(grid: list) -> str:
+    rows = []
+    for r in grid:
+        items = [f"'{c}'" for c in r]
+        rows.append("{" + ", ".join(items) + "}")
+    return "{" + ", ".join(rows) + "}"
+
+
+def _build_cpp_harness(problem: dict, candidate_code: str, test_cases: list[dict]) -> str:
+    problem_id = problem["id"]
+    has_class = "class Solution" in candidate_code
+    call_prefix = "sol." if has_class else ""
+
+    harness_lines = [
+        "#include <iostream>",
+        "#include <vector>",
+        "#include <string>",
+        "#include <sstream>",
+        "#include <algorithm>",
+        "#include <unordered_map>",
+        "#include <unordered_set>",
+        "#include <queue>",
+        "#include <stack>",
+        "#include <climits>",
+        "using namespace std;",
+        "",
+        "string to_json(int v) { return to_string(v); }",
+        "string to_json(long long v) { return to_string(v); }",
+        "string to_json(bool v) { return v ? \"true\" : \"false\"; }",
+        "string to_json(char c) { return string(\"\\\"\") + c + \"\\\"\"; }",
+        "string to_json(const string& s) {",
+        "    string out = \"\\\"\";",
+        "    for (char c : s) {",
+        "        if (c == '\"') out += \"\\\\\\\"\";",
+        "        else if (c == '\\\\') out += \"\\\\\\\\\";",
+        "        else out += c;",
+        "    }",
+        "    out += \"\\\"\";",
+        "    return out;",
+        "}",
+        "template<typename T>",
+        "string to_json(const vector<T>& vec) {",
+        "    string out = \"[\";",
+        "    for (size_t i = 0; i < vec.size(); ++i) {",
+        "        if (i > 0) out += \", \";",
+        "        out += to_json(vec[i]);",
+        "    }",
+        "    out += \"]\";",
+        "    return out;",
+        "}",
+    ]
+
+    if "struct TreeNode" not in candidate_code and "class TreeNode" not in candidate_code:
+        harness_lines.extend([
+            "struct TreeNode {",
+            "    int val;",
+            "    TreeNode *left;",
+            "    TreeNode *right;",
+            "    TreeNode() : val(0), left(NULL), right(NULL) {}",
+            "    TreeNode(int x) : val(x), left(NULL), right(NULL) {}",
+            "};",
+        ])
+
+    harness_lines.extend([
+        "TreeNode* _buildTree(const vector<string>& arr) {",
+        "    if (arr.empty() || arr[0] == \"null\") return nullptr;",
+        "    TreeNode* root = new TreeNode(stoi(arr[0]));",
+        "    queue<TreeNode*> q;",
+        "    q.push(root);",
+        "    size_t i = 1;",
+        "    while (!q.empty() && i < arr.size()) {",
+        "        TreeNode* curr = q.front();",
+        "        q.pop();",
+        "        if (i < arr.size() && arr[i] != \"null\") {",
+        "            curr->left = new TreeNode(stoi(arr[i]));",
+        "            q.push(curr->left);",
+        "        }",
+        "        i++;",
+        "        if (i < arr.size() && arr[i] != \"null\") {",
+        "            curr->right = new TreeNode(stoi(arr[i]));",
+        "            q.push(curr->right);",
+        "        }",
+        "        i++;",
+        "    }",
+        "    return root;",
+        "}",
+        "",
+        "// ── Candidate Code ──",
+        candidate_code,
+        "",
+        "int main() {",
+    ])
+
+    if has_class:
+        harness_lines.append("    Solution sol;")
+
+    harness_lines.append('    cout << "[";')
+
+    total_tc = len(test_cases)
+    for idx, tc in enumerate(test_cases):
+        inp = tc["input"]
+        expected = tc["expected"]
+        comma = "" if idx == total_tc - 1 else ","
+
+        block = [f"    // Test case {idx}", "    {", "        try {"]
+
+        if problem_id == "two-sum":
+            block.extend([
+                f"            vector<int> _nums = {_cpp_literal(inp['nums'])};",
+                f"            int _target = {_cpp_literal(inp['target'])};",
+                f"            vector<int> _exp = {_cpp_literal(expected)};",
+                f"            vector<int> _got = {call_prefix}twoSum(_nums, _target);",
+                f"            vector<int> _g_s = _got; vector<int> _e_s = _exp;",
+                f"            sort(_g_s.begin(), _g_s.end()); sort(_e_s.begin(), _e_s.end());",
+                f"            bool _p = (_g_s == _e_s);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "valid-parentheses":
+            block.extend([
+                f"            string _s = {_cpp_literal(inp['s'])};",
+                f"            bool _exp = {_cpp_literal(expected)};",
+                f"            bool _got = {call_prefix}isValid(_s);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "best-time-buy-sell":
+            block.extend([
+                f"            vector<int> _prices = {_cpp_literal(inp['prices'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}maxProfit(_prices);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "binary-search":
+            block.extend([
+                f"            vector<int> _nums = {_cpp_literal(inp['nums'])};",
+                f"            int _target = {_cpp_literal(inp['target'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}search(_nums, _target);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "longest-substring":
+            block.extend([
+                f"            string _s = {_cpp_literal(inp['s'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}lengthOfLongestSubstring(_s);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "product-except-self":
+            block.extend([
+                f"            vector<int> _nums = {_cpp_literal(inp['nums'])};",
+                f"            vector<int> _exp = {_cpp_literal(expected)};",
+                f"            vector<int> _got = {call_prefix}productExceptSelf(_nums);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "merge-intervals":
+            block.extend([
+                f"            vector<vector<int>> _intervals = {_cpp_literal(inp['intervals'])};",
+                f"            vector<vector<int>> _exp = {_cpp_literal(expected)};",
+                f"            vector<vector<int>> _got = {call_prefix}merge(_intervals);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "top-k-frequent":
+            block.extend([
+                f"            vector<int> _nums = {_cpp_literal(inp['nums'])};",
+                f"            int _k = {_cpp_literal(inp['k'])};",
+                f"            vector<int> _exp = {_cpp_literal(expected)};",
+                f"            vector<int> _got = {call_prefix}topKFrequent(_nums, _k);",
+                f"            vector<int> _g_s = _got; vector<int> _e_s = _exp;",
+                f"            sort(_g_s.begin(), _g_s.end()); sort(_e_s.begin(), _e_s.end());",
+                f"            bool _p = (_g_s == _e_s);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "number-of-islands":
+            block.extend([
+                f"            vector<vector<char>> _grid = {_grid_to_cpp(inp['grid'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}numIslands(_grid);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "binary-tree-level-order":
+            block.extend([
+                f"            vector<string> _tree_raw = {_tree_to_cpp_vec(inp['tree'])};",
+                f"            TreeNode* _root = _buildTree(_tree_raw);",
+                f"            vector<vector<int>> _exp = {_cpp_literal(expected)};",
+                f"            vector<vector<int>> _got = {call_prefix}levelOrder(_root);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "lowest-common-ancestor":
+            block.extend([
+                f"            vector<string> _tree_raw = {_tree_to_cpp_vec(inp['tree'])};",
+                f"            TreeNode* _root = _buildTree(_tree_raw);",
+                f"            int _p_val = {_cpp_literal(inp['p'])};",
+                f"            int _q_val = {_cpp_literal(inp['q'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}lowestCommonAncestor(_root, _p_val, _q_val);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "coin-change":
+            block.extend([
+                f"            vector<int> _coins = {_cpp_literal(inp['coins'])};",
+                f"            int _amount = {_cpp_literal(inp['amount'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}coinChange(_coins, _amount);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "longest-increasing-subsequence":
+            block.extend([
+                f"            vector<int> _nums = {_cpp_literal(inp['nums'])};",
+                f"            int _exp = {_cpp_literal(expected)};",
+                f"            int _got = {call_prefix}lengthOfLIS(_nums);",
+                f"            bool _p = (_got == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "course-schedule":
+            block.extend([
+                f"            int _numCourses = {_cpp_literal(inp['numCourses'])};",
+                f"            vector<vector<int>> _prereqs = {_cpp_literal(inp['prerequisites'])};",
+                f"            bool _exp = {_cpp_literal(expected)};",
+                f"            bool _got = {call_prefix}canFinish(_numCourses, _prereqs);",
+                f"            bool _p = (bool(_got) == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        elif problem_id == "word-break":
+            block.extend([
+                f"            string _s = {_cpp_literal(inp['s'])};",
+                f"            vector<string> _wordDict = {_cpp_literal(inp['wordDict'])};",
+                f"            bool _exp = {_cpp_literal(expected)};",
+                f"            bool _got = {call_prefix}wordBreak(_s, _wordDict);",
+                f"            bool _p = (bool(_got) == _exp);",
+                f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": \" << (_p ? \"true\" : \"false\")",
+                f"                 << \", \\\"got\\\": \" << to_json(_got)",
+                f"                 << \", \\\"expected\\\": \" << to_json(_exp) << \"}}{comma}\\n\";",
+            ])
+        else:
+            block.append(f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": false, \\\"error\\\": \\\"Unknown problem id\\\"}}{comma}\\n\";")
+
+        block.extend([
+            "        } catch (const exception& e) {",
+            f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": false, \\\"error\\\": \\\"\" << e.what() << \"\\\"}}{comma}\\n\";",
+            "        } catch (...) {",
+            f"            cout << \"{{\\\"idx\\\": {idx}, \\\"passed\\\": false, \\\"error\\\": \\\"Runtime exception\\\"}}{comma}\\n\";",
+            "        }",
+            "    }",
+        ])
+        harness_lines.extend(block)
+
+    harness_lines.extend([
+        '    cout << "]" << endl;',
+        '    return 0;',
+        '}',
+    ])
+
+    return "\n".join(harness_lines)
 
 
 # ─── Main Executor ────────────────────────────────────────────────────────────
@@ -399,6 +772,9 @@ def execute_code(
     """
     start_time = time.monotonic()
     total = len(test_cases)
+    tf_js = None
+    tf_cpp = None
+    exe_path = None
 
     # ── Build harness ──────────────────────────────────────────────────────────
     try:
@@ -407,12 +783,43 @@ def execute_code(
             cmd = [PYTHON_EXEC, "-c", harness]
         elif language == "javascript":
             harness = _build_js_harness(problem, candidate_code, test_cases)
-            # Write to temp file for Node.js
-            tf = tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False)
-            tf.write(harness)
-            tf.flush()
-            tf.close()
-            cmd = ["node", tf.name]
+            tf_js = tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False, encoding="utf-8")
+            tf_js.write(harness)
+            tf_js.flush()
+            tf_js.close()
+            cmd = [NODE_EXEC, tf_js.name]
+        elif language in ("cpp", "c++"):
+            harness = _build_cpp_harness(problem, candidate_code, test_cases)
+            tf_cpp = tempfile.NamedTemporaryFile(mode="w", suffix=".cpp", delete=False, encoding="utf-8")
+            tf_cpp.write(harness)
+            tf_cpp.flush()
+            tf_cpp.close()
+            exe_path = tf_cpp.name.replace(".cpp", ".exe")
+
+            # Compile C++
+            comp_proc = subprocess.run(
+                [CPP_COMPILER, "-std=c++14", "-O2", tf_cpp.name, "-o", exe_path],
+                capture_output=True,
+                text=True,
+                timeout=12.0,
+                cwd=tempfile.gettempdir(),
+            )
+            elapsed_ms = (time.monotonic() - start_time) * 1000
+            if comp_proc.returncode != 0:
+                try:
+                    os.unlink(tf_cpp.name)
+                except Exception:
+                    pass
+                err = comp_proc.stderr.strip() or comp_proc.stdout.strip()
+                return ExecutionResult(
+                    status="COMPILE_ERROR",
+                    passedTests=0,
+                    totalTests=total,
+                    compileError=err[:1000],
+                    executionTimeMs=round(elapsed_ms, 2),
+                    failedTestIndexes=list(range(total)),
+                )
+            cmd = [exe_path]
         else:
             return ExecutionResult(
                 status="COMPILE_ERROR",
@@ -442,13 +849,6 @@ def execute_code(
 
         elapsed_ms = (time.monotonic() - start_time) * 1000
 
-        # Clean up temp JS file
-        if language == "javascript":
-            try:
-                os.unlink(tf.name)
-            except Exception:
-                pass
-
         # ── Parse output ───────────────────────────────────────────────────────
         if proc.returncode != 0 and not proc.stdout.strip():
             stderr = proc.stderr.strip()
@@ -458,7 +858,7 @@ def execute_code(
                     passedTests=0,
                     totalTests=total,
                     compileError=stderr[:500],
-                    executionTimeMs=elapsed_ms,
+                    executionTimeMs=round(elapsed_ms, 2),
                     failedTestIndexes=list(range(total)),
                 )
             return ExecutionResult(
@@ -466,16 +866,15 @@ def execute_code(
                 passedTests=0,
                 totalTests=total,
                 runtimeError=stderr[:500] or proc.stdout[:500],
-                executionTimeMs=elapsed_ms,
+                executionTimeMs=round(elapsed_ms, 2),
                 failedTestIndexes=list(range(total)),
             )
 
         # Try to parse JSON results from stdout
         stdout = proc.stdout.strip()
         try:
-            results = _json.loads(stdout)
+            results = json.loads(stdout)
         except Exception:
-            # If there's a runtime error mixed into stdout
             stderr = proc.stderr.strip()
             err_msg = stderr if stderr else stdout[:500]
             return ExecutionResult(
@@ -483,7 +882,7 @@ def execute_code(
                 passedTests=0,
                 totalTests=total,
                 runtimeError=err_msg[:500],
-                executionTimeMs=elapsed_ms,
+                executionTimeMs=round(elapsed_ms, 2),
                 failedTestIndexes=list(range(total)),
             )
 
@@ -509,17 +908,12 @@ def execute_code(
             passedTests=passed,
             totalTests=total,
             executionTimeMs=round(elapsed_ms, 2),
-            memoryKb=0.0,  # Not measured in subprocess mode
+            memoryKb=0.0,
             failedTestIndexes=failed_idxs,
             testDetails=test_details,
         )
 
     except subprocess.TimeoutExpired:
-        if language == "javascript":
-            try:
-                os.unlink(tf.name)
-            except Exception:
-                pass
         elapsed_ms = (time.monotonic() - start_time) * 1000
         return ExecutionResult(
             status="TIME_LIMIT",
@@ -536,3 +930,19 @@ def execute_code(
             runtimeError=str(e)[:500],
             failedTestIndexes=list(range(total)),
         )
+    finally:
+        if tf_js and os.path.exists(tf_js.name):
+            try:
+                os.unlink(tf_js.name)
+            except Exception:
+                pass
+        if tf_cpp and os.path.exists(tf_cpp.name):
+            try:
+                os.unlink(tf_cpp.name)
+            except Exception:
+                pass
+        if exe_path and os.path.exists(exe_path):
+            try:
+                os.unlink(exe_path)
+            except Exception:
+                pass

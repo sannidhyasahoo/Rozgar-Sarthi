@@ -33,7 +33,7 @@
     {
       "company": "Samsung R&D Institute India",
       "role": "AI/ML Intern",
-      "duration": "Jun 2026–Present",
+      "duration": "Jan 2026–Aug 2026",
       "key_achievements": [
         "Engineered a type-specific Document AI/OCR extraction framework for noisy mobile-captured documents, supporting structured field extraction across 9 document categories.",
         "Built a RapidOCR processing path with EXIF-aware coordinate correction, confidence-gated recovery for rotated text, and category-conditioned routing into LiLT and NuNER-v2-based extractors with deterministic validation.",
@@ -53,8 +53,8 @@
     }
   ],
   "projects": [
-    "CompliBot – AI-powered GST filing assistant for WhatsApp and Telegram using OCR and AI to extract invoice data and file GST/NIL returns; eliminated third‑party API costs and reduced filing expenses.",
-    "IDHard – Designed a reusable KYC flow with Verifiable Credentials, SD‑JWTs, and Zero‑Knowledge Proofs; implemented verifier‑side cryptographic checks backed by Merkle Trees and Polygon, replacing document exchange with proof‑based credential verification.",
-    "Rozgar Sarthi – Built an adaptive interview engine using LangGraph, FastAPI, and Next.js that maintains candidate competency state, extracts evidence, detects inconsistencies, and dynamically selects follow‑up questions to assess technical, behavioral, and problem‑solving skills."
+    "CompliBot – AI-powered GST filing assistant for WhatsApp/Telegram using OCR and AI, eliminated third‑party API costs and reduced filing expenses.",
+    "IDHard – Reusable KYC flow with Verifiable Credentials, SD‑JWTs, Zero‑Knowledge Proofs, Merkle Trees and Polygon integration.",
+    "Rozgar Sarthi – Adaptive interview engine using LangGraph, FastAPI, Next.js and LLMs to evaluate candidate competency and dynamically select follow‑up questions."
   ]
 }

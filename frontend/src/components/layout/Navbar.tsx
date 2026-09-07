@@ -13,6 +13,11 @@ export function Navbar() {
 
   const isInterviewActive = pathname === "/interview";
 
+  // When inside dashboard or full-screen coding assessment, suppress global navbar
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/coding/assessment")) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-zinc-200">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">

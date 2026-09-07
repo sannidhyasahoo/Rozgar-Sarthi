@@ -461,12 +461,12 @@
     "functionSignature": {
       "python": "def lowest_common_ancestor(root, p: int, q: int) -> int:",
       "javascript": "function lowestCommonAncestor(root, p, q)",
-      "cpp": "TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q)"
+      "cpp": "int lowestCommonAncestor(TreeNode* root, int p, int q)"
     },
     "starterCode": {
       "python": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef lowest_common_ancestor(root, p: int, q: int) -> int:\n    # root is a TreeNode, p and q are integer values\n    # Return the integer value of the LCA node\n    pass\n",
-      "javascript": "function lowestCommonAncestor(root, p, q) {\n    // root is a TreeNode, p and q are integer values\n    // Return the integer value of the LCA node\n}\n",
-      "cpp": "int lowestCommonAncestor(TreeNode* root, int p, int q) {\n    // Return the value of the LCA node\n    return 0;\n}\n"
+      "javascript": "/**\n * Definition for a binary tree node.\n * function TreeNode(val) {\n *     this.val = val;\n *     this.left = this.right = null;\n * }\n */\nfunction lowestCommonAncestor(root, p, q) {\n    // root is a TreeNode, p and q are integer values\n    // Return the integer value of the LCA node\n}\n",
+      "cpp": "#include <iostream>\nusing namespace std;\n\nstruct TreeNode {\n    int val;\n    TreeNode *left;\n    TreeNode *right;\n    TreeNode(int x) : val(x), left(NULL), right(NULL) {}\n};\n\nclass Solution {\npublic:\n    int lowestCommonAncestor(TreeNode* root, int p, int q) {\n        // Return the value of the LCA node\n        return 0;\n    }\n};\n"
     },
     "solutionReference": {
       "python": "def lowest_common_ancestor(root, p, q):\n    if not root:\n        return None\n    if root.val == p or root.val == q:\n        return root\n    left = lowest_common_ancestor(root.left, p, q)\n    right = lowest_common_ancestor(root.right, p, q)\n    if left and right:\n        return root\n    return left if left else right\n"

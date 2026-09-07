@@ -1,0 +1,150 @@
+{
+  "id": "ab913663-ea1e-4f73-9349-61877e33485a",
+  "createdAt": "2026-09-03T07:51:08.355421",
+  "updatedAt": "2026-09-03T07:52:00.629781",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 1,
+  "timeStarted": "2026-09-03T07:51:08.355421",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-03T07:51:08.355421",
+      "completedAt": "2026-09-03T07:51:55.321871",
+      "submissions": [
+        {
+          "id": "a04ced0e-ec72-4d96-bd41-a08d9163bf09",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []",
+          "submittedAt": "2026-09-03T07:51:32.858514",
+          "isRun": true,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 3,
+            "totalTests": 3,
+            "executionTimeMs": 390.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": true,
+                "got": "[1, 2]",
+                "expected": "[1, 2]",
+                "error": null
+              },
+              {
+                "index": 2,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "0c0aab76-a9b7-4e7d-ac74-397eccfc4f9a",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []",
+          "submittedAt": "2026-09-03T07:51:50.285077",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 10,
+            "totalTests": 10,
+            "executionTimeMs": 94.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.95,
+            "signals": [
+              "single_loop",
+              "hashmap_usage"
+            ],
+            "dataStructures": [
+              "hashmap"
+            ],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 1
+          }
+        }
+      ],
+      "finalPassRate": 1.0,
+      "firstPassRate": 1.0,
+      "bestPassRate": 1.0,
+      "totalAttempts": 1
+    },
+    {
+      "questionId": "longest-substring",
+      "difficulty": 3,
+      "topics": [
+        "strings",
+        "hashmap",
+        "sliding-window"
+      ],
+      "skills": [
+        "hashmap",
+        "slidingWindow"
+      ],
+      "startedAt": "2026-09-03T07:52:00.629781",
+      "completedAt": null,
+      "submissions": [],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 56.4,
+    "strings": 50.0,
+    "hashmaps": 56.4,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 56.0,
+    "accuracy": 60.0,
+    "speed": 58.0,
+    "debugging": 60.0,
+    "edgeCaseHandling": 55.0,
+    "efficiency": 58.0
+  },
+  "reportGenerated": false
+}

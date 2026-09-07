@@ -1,7 +1,7 @@
 // src/lib/codingApi.ts
 // Typed API client for the adaptive coding assessment endpoints.
 
-const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
 
 export interface CodingProblem {
   id: string;
