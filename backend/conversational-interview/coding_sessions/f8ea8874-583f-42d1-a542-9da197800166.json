@@ -1,0 +1,99 @@
+{
+  "id": "f8ea8874-583f-42d1-a542-9da197800166",
+  "createdAt": "2026-09-07T16:01:24.679093",
+  "updatedAt": "2026-09-07T16:01:46.995225",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T16:01:24.680001",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T16:01:24.688627",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "c1ebc7d9-2209-4131-82e0-ac4d5d9af21a",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T16:01:46.995225",
+          "isRun": true,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 172.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              },
+              {
+                "index": 1,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              },
+              {
+                "index": 2,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "'NoneType' object is not iterable"
+              }
+            ]
+          },
+          "codeAnalysis": null
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 50.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 50.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 50.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

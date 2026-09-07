@@ -315,7 +315,7 @@ export default function AssessmentPageClient({
           >
             {/* Language Switcher Tabs */}
             <div className="flex items-center gap-1">
-              {(["python", "javascript"] as Language[]).map((lang) => (
+              {(["python", "javascript", "cpp"] as Language[]).map((lang) => (
                 <button
                   key={lang}
                   onClick={() => handleLanguageChange(lang)}

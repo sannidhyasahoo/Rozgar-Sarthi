@@ -42,8 +42,38 @@ BLOCKED_IMPORTS_PYTHON = [
 ]
 
 PYTHON_EXEC = sys.executable  # use same Python that's running the backend
-NODE_EXEC = shutil.which("node") or r"C:\Program Files\nodejs\node.exe"
-CPP_COMPILER = shutil.which("g++") or r"C:\MinGW\bin\g++.exe"
+
+
+def _find_node_exec() -> str | None:
+    found = shutil.which("node")
+    if found:
+        return found
+    candidates = [
+        r"C:\Program Files\nodejs\node.exe",
+        r"C:\Program Files (x86)\nodejs\node.exe",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+
+def _find_cpp_compiler() -> str | None:
+    found = shutil.which("g++") or shutil.which("clang++")
+    if found:
+        return found
+    candidates = [
+        r"C:\MinGW\bin\g++.exe",
+        r"C:\msys64\ucrt64\bin\g++.exe",
+        r"C:\msys64\mingw64\bin\g++.exe",
+        r"C:\Program Files\Git\usr\bin\g++.exe",
+        r"C:\TDM-GCC-64\bin\g++.exe",
+        r"C:\w64devkit\bin\g++.exe",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
 
 
 # ─── Tree / Build Helper ──────────────────────────────────────────────────────
@@ -528,6 +558,10 @@ def _build_cpp_harness(problem: dict, candidate_code: str, test_cases: list[dict
         ])
 
     harness_lines.extend([
+        "",
+        "// ── Candidate Code ──",
+        candidate_code,
+        "",
         "TreeNode* _buildTree(const vector<string>& arr) {",
         "    if (arr.empty() || arr[0] == \"null\") return nullptr;",
         "    TreeNode* root = new TreeNode(stoi(arr[0]));",
@@ -550,9 +584,6 @@ def _build_cpp_harness(problem: dict, candidate_code: str, test_cases: list[dict
         "    }",
         "    return root;",
         "}",
-        "",
-        "// ── Candidate Code ──",
-        candidate_code,
         "",
         "int main() {",
     ])
@@ -782,13 +813,31 @@ def execute_code(
             harness = _build_python_harness(problem, candidate_code, test_cases)
             cmd = [PYTHON_EXEC, "-c", harness]
         elif language == "javascript":
+            node_exec = _find_node_exec()
+            if not node_exec:
+                return ExecutionResult(
+                    status="COMPILE_ERROR",
+                    passedTests=0,
+                    totalTests=total,
+                    compileError="Node.js runtime (node) not found. Please install Node.js or add node to PATH.",
+                    failedTestIndexes=list(range(total)),
+                )
             harness = _build_js_harness(problem, candidate_code, test_cases)
             tf_js = tempfile.NamedTemporaryFile(mode="w", suffix=".js", delete=False, encoding="utf-8")
             tf_js.write(harness)
             tf_js.flush()
             tf_js.close()
-            cmd = [NODE_EXEC, tf_js.name]
+            cmd = [node_exec, tf_js.name]
         elif language in ("cpp", "c++"):
+            cpp_compiler = _find_cpp_compiler()
+            if not cpp_compiler:
+                return ExecutionResult(
+                    status="COMPILE_ERROR",
+                    passedTests=0,
+                    totalTests=total,
+                    compileError="C++ compiler (g++ / clang++) not found. Please install MinGW-w64 or add g++ to PATH.",
+                    failedTestIndexes=list(range(total)),
+                )
             harness = _build_cpp_harness(problem, candidate_code, test_cases)
             tf_cpp = tempfile.NamedTemporaryFile(mode="w", suffix=".cpp", delete=False, encoding="utf-8")
             tf_cpp.write(harness)
@@ -798,7 +847,7 @@ def execute_code(
 
             # Compile C++
             comp_proc = subprocess.run(
-                [CPP_COMPILER, "-std=c++14", "-O2", tf_cpp.name, "-o", exe_path],
+                [cpp_compiler, "-std=c++14", "-O2", tf_cpp.name, "-o", exe_path],
                 capture_output=True,
                 text=True,
                 timeout=12.0,

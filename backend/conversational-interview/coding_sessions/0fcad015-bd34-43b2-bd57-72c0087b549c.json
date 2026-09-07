@@ -1,0 +1,99 @@
+{
+  "id": "0fcad015-bd34-43b2-bd57-72c0087b549c",
+  "createdAt": "2026-09-07T16:44:06.716200",
+  "updatedAt": "2026-09-07T16:45:30.258652",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T16:44:06.716200",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T16:44:06.725912",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "179d269c-d145-4b5f-ad5a-5d982ac31520",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "cpp",
+          "code": "#include <vector>\n#include <unordered_map>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Write your solution here\n        return {};\n    }\n};\n",
+          "submittedAt": "2026-09-07T16:45:30.258652",
+          "isRun": true,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 3953.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": false,
+                "got": "[]",
+                "expected": "[0, 1]",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": false,
+                "got": "[]",
+                "expected": "[1, 2]",
+                "error": null
+              },
+              {
+                "index": 2,
+                "passed": false,
+                "got": "[]",
+                "expected": "[0, 1]",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 50.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 50.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 50.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}
