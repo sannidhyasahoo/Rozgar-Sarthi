@@ -1,0 +1,212 @@
+{
+  "id": "f917c6f0-7889-429a-9fb3-b8d6a162225c",
+  "createdAt": "2026-09-07T16:02:06.136329",
+  "updatedAt": "2026-09-07T16:36:57.459393",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 2,
+  "timeStarted": "2026-09-07T16:02:06.136329",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T16:02:06.137839",
+      "completedAt": "2026-09-07T16:02:09.432989",
+      "submissions": [],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    },
+    {
+      "questionId": "number-of-islands",
+      "difficulty": 3,
+      "topics": [
+        "arrays",
+        "graphs",
+        "BFS",
+        "DFS"
+      ],
+      "skills": [
+        "graphs",
+        "recursion"
+      ],
+      "startedAt": "2026-09-07T16:02:12.546907",
+      "completedAt": "2026-09-07T16:36:55.251958",
+      "submissions": [
+        {
+          "id": "0a81de1d-c391-4507-8605-cc693e48bbe5",
+          "questionId": "number-of-islands",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def num_islands(grid: list[list[str]]) -> int:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T16:36:47.561016",
+          "isRun": false,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 9,
+            "executionTimeMs": 78.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(1)",
+            "estimatedSpaceComplexity": "O(1)",
+            "confidence": 0.75,
+            "signals": [],
+            "dataStructures": [],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 0
+          }
+        },
+        {
+          "id": "a77810cc-40ec-4b0d-9b6b-11a4d2948e66",
+          "questionId": "number-of-islands",
+          "attemptNumber": 2,
+          "language": "python",
+          "code": "def num_islands(grid: list[list[str]]) -> int:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T16:36:49.260745",
+          "isRun": false,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 9,
+            "executionTimeMs": 63.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(1)",
+            "estimatedSpaceComplexity": "O(1)",
+            "confidence": 0.75,
+            "signals": [],
+            "dataStructures": [],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 0
+          }
+        },
+        {
+          "id": "bca3ccd6-4e9c-4b41-8080-39a6850e7842",
+          "questionId": "number-of-islands",
+          "attemptNumber": 3,
+          "language": "python",
+          "code": "def num_islands(grid: list[list[str]]) -> int:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T16:36:49.959225",
+          "isRun": false,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 9,
+            "executionTimeMs": 63.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(1)",
+            "estimatedSpaceComplexity": "O(1)",
+            "confidence": 0.75,
+            "signals": [],
+            "dataStructures": [],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 0
+          }
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 3
+    },
+    {
+      "questionId": "binary-tree-level-order",
+      "difficulty": 3,
+      "topics": [
+        "trees",
+        "BFS"
+      ],
+      "skills": [
+        "trees",
+        "graphs"
+      ],
+      "startedAt": "2026-09-07T16:36:57.459393",
+      "completedAt": null,
+      "submissions": [],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 26.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 26.0,
+    "graphs": 26.0,
+    "greedy": 50.0,
+    "recursion": 26.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 20.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 35.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

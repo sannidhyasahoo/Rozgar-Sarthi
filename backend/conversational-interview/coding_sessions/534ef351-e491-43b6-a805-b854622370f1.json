@@ -1,0 +1,132 @@
+{
+  "id": "534ef351-e491-43b6-a805-b854622370f1",
+  "createdAt": "2026-09-07T16:42:21.666247",
+  "updatedAt": "2026-09-07T16:42:24.841495",
+  "status": "active",
+  "totalQuestions": 3,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T16:42:21.666247",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T16:42:21.666247",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "45694afd-d341-4520-944c-6fcf4812bb8a",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "cpp",
+          "code": "\n#include <vector>\n#include <unordered_map>\nusing namespace std;\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<int, int> seen;\n        for (int i = 0; i < (int)nums.size(); ++i) {\n            int comp = target - nums[i];\n            if (seen.count(comp)) return {seen[comp], i};\n            seen[nums[i]] = i;\n        }\n        return {};\n    }\n};\n",
+          "submittedAt": "2026-09-07T16:42:23.220275",
+          "isRun": true,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 3,
+            "totalTests": 3,
+            "executionTimeMs": 1438.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": true,
+                "got": "[1, 2]",
+                "expected": "[1, 2]",
+                "error": null
+              },
+              {
+                "index": 2,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "02b9dc5f-eb41-4d0b-bd4f-8442fb5b22a1",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "cpp",
+          "code": "\n#include <vector>\n#include <unordered_map>\nusing namespace std;\nclass Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<int, int> seen;\n        for (int i = 0; i < (int)nums.size(); ++i) {\n            int comp = target - nums[i];\n            if (seen.count(comp)) return {seen[comp], i};\n            seen[nums[i]] = i;\n        }\n        return {};\n    }\n};\n",
+          "submittedAt": "2026-09-07T16:42:24.841495",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 10,
+            "totalTests": 10,
+            "executionTimeMs": 1531.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.95,
+            "signals": [
+              "single_loop",
+              "set_usage",
+              "hashmap_usage"
+            ],
+            "dataStructures": [
+              "hashmap",
+              "set"
+            ],
+            "hasRecursion": false,
+            "functionCount": 0,
+            "loopDepth": 1
+          }
+        }
+      ],
+      "finalPassRate": 1.0,
+      "firstPassRate": 1.0,
+      "bestPassRate": 1.0,
+      "totalAttempts": 1
+    }
+  ],
+  "skillProfile": {
+    "arrays": 56.4,
+    "strings": 50.0,
+    "hashmaps": 56.4,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 56.0,
+    "accuracy": 60.0,
+    "speed": 58.0,
+    "debugging": 60.0,
+    "edgeCaseHandling": 55.0,
+    "efficiency": 58.0
+  },
+  "reportGenerated": false
+}
