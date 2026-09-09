@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { MockAuthProvider } from "@/components/auth/AuthProvider";
+import { GlobalProgressProvider } from "@/components/common/GlobalProgressProvider";
+import { ThemeProvider } from "@/components/common/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -38,13 +40,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${dmMono.variable}`}>
-      <body className="min-h-screen flex flex-col bg-[#fafafa] text-zinc-800 font-sans antialiased selection:bg-iris/20 selection:text-iris">
-        <MockAuthProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </MockAuthProvider>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${dmMono.variable}`}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("rozgar_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen flex flex-col bg-[#fafafa] dark:bg-[#08070c] text-zinc-800 dark:text-zinc-100 font-sans antialiased selection:bg-iris/20 selection:text-iris transition-colors duration-200">
+        <ThemeProvider>
+          <MockAuthProvider>
+            <GlobalProgressProvider>
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </GlobalProgressProvider>
+          </MockAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -49,12 +49,166 @@
   --shadow-xl: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
 }
 
+.dark {
+  /* Darker Obsidian Palette with Subtle Purplish Nuance */
+  --surface-canvas: #08070c;
+  --surface-card: #12111a;
+  --surface-wash: #161420;
+  --surface-dark-band: #050508;
+
+  --color-zinc-50: #08070c;
+  --color-zinc-100: #0e0d14;
+  --color-zinc-200: #1f1c2b;
+  --color-zinc-300: #2a253a;
+  --color-zinc-400: #38324e;
+  --color-zinc-500: #554e75;
+  --color-zinc-600: #7c7599;
+  --color-zinc-700: #9e98b7;
+  --color-zinc-800: #151322;
+  --color-zinc-900: #100e18;
+
+  --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.7), 0 1px 2px -1px rgba(0, 0, 0, 0.7);
+  --shadow-subtle-2: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Ensure ALL white cards and dev-cards transition to dark obsidian in dark mode */
+.dark .dev-card,
+.dark .bg-white {
+  background-color: #12111a !important;
+  color: #f9f8fc;
+}
+
+.dark .bg-zinc-50,
+.dark .bg-zinc-50\/50,
+.dark .bg-zinc-50\/70,
+.dark .bg-white\/60,
+.dark .bg-white\/80,
+.dark .bg-white\/95 {
+  background-color: #0e0d14 !important;
+}
+
+.dark .bg-zinc-100 {
+  background-color: #181622 !important;
+}
+
+.dark .hover\:bg-white:hover {
+  background-color: #1a1726 !important;
+}
+
+.dark .hover\:bg-zinc-50:hover,
+.dark .hover\:bg-zinc-100:hover {
+  background-color: #1e1b2c !important;
+}
+
+/* Eliminate ANY black or low-contrast text in dark mode */
+.dark .text-zinc-900,
+.dark .text-black,
+.dark .text-zinc-800 {
+  color: #f9f8fc !important;
+}
+
+.dark .text-zinc-700 {
+  color: #ded9ed !important;
+}
+
+.dark .text-zinc-600 {
+  color: #c4bddf !important;
+}
+
+.dark .text-zinc-500 {
+  color: #9e98b7 !important;
+}
+
+.dark .text-zinc-400 {
+  color: #a8a1c7 !important;
+}
+
+.dark .text-zinc-300 {
+  color: #ded9ed !important;
+}
+
+.dark .text-zinc-200 {
+  color: #edeaf7 !important;
+}
+
+.dark .text-zinc-100 {
+  color: #f9f8fc !important;
+}
+
+/* Borders in dark mode - refined subtle obsidian, never chalky or purple */
+.dark .border-zinc-200,
+.dark .border-zinc-200\/80,
+.dark .border-zinc-200\/90,
+.dark .border-zinc-100,
+.dark .border-zinc-300,
+.dark .border-zinc-400,
+.dark .border-zinc-500,
+.dark .border-zinc-600,
+.dark .border-zinc-700,
+.dark .border-zinc-700\/50,
+.dark .border-zinc-700\/60,
+.dark .border-zinc-800,
+.dark .border-zinc-800\/80,
+.dark .border-zinc-800\/90 {
+  border-color: #1f1c2b !important;
+}
+
+/* Form controls (inputs, textareas, selects) in dark mode */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: #12111a !important;
+  border-color: #262335 !important;
+  color: #f9f8fc !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #6d6687 !important;
+}
+
+.dark input:focus:not(.border-none):not(.border-0):not([data-borderless]),
+.dark textarea:focus:not(.border-none):not(.border-0):not([data-borderless]),
+.dark select:focus:not(.border-none):not(.border-0):not([data-borderless]) {
+  border-color: #7c6df5 !important;
+  box-shadow: 0 0 0 2px rgba(124, 109, 245, 0.25) !important;
+}
+
+.dark input.border-none:focus,
+.dark input.border-0:focus,
+.dark input[data-borderless]:focus,
+input.border-none:focus,
+input.border-0:focus,
+input[data-borderless]:focus {
+  border: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Custom dark scrollbar with violet accent */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #08070c;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #1f1c2b;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #36304d;
+}
+
 body {
   background-color: var(--surface-canvas);
   color: var(--color-zinc-800);
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Developer Workshop & Monospace Eyebrow Rules */
@@ -139,4 +293,40 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-zinc-400);
+}
+
+/* Universal Instant Interactive Click & Loading Responsiveness */
+button:not(:disabled):active,
+[role="button"]:not([aria-disabled="true"]):active,
+a:active {
+  transform: scale(0.985);
+  transition: transform 0.08s ease;
+}
+
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed !important;
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+/* Subtle Shimmer for Skeleton and Loading States */
+@keyframes shimmerPulse {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmerPulse 1.5s infinite;
 }

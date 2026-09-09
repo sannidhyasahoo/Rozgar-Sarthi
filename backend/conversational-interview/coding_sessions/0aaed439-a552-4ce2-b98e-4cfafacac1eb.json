@@ -1,0 +1,375 @@
+{
+  "id": "0aaed439-a552-4ce2-b98e-4cfafacac1eb",
+  "createdAt": "2026-09-07T18:26:52.754143",
+  "updatedAt": "2026-09-07T18:29:21.525434",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 3,
+  "timeStarted": "2026-09-07T18:26:52.754143",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T18:26:52.755158",
+      "completedAt": "2026-09-07T18:28:08.012973",
+      "submissions": [
+        {
+          "id": "a7ebf143-bc80-47b0-a683-fb7d57b5867c",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n\n    for i, num in enumerate(nums):\n        complement = target - num\n\n        if complement in seen:\n            return [seen[complement], i]\n\n        seen[num] = i\n\n    return []",
+          "submittedAt": "2026-09-07T18:27:37.499582",
+          "isRun": true,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 3,
+            "totalTests": 3,
+            "executionTimeMs": 110.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": true,
+                "got": "[1, 2]",
+                "expected": "[1, 2]",
+                "error": null
+              },
+              {
+                "index": 2,
+                "passed": true,
+                "got": "[0, 1]",
+                "expected": "[0, 1]",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "aa9483d2-7a4d-4e5f-b1bd-dd09fe731c94",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n\n    for i, num in enumerate(nums):\n        complement = target - num\n\n        if complement in seen:\n            return [seen[complement], i]\n\n        seen[num] = i\n\n    return []",
+          "submittedAt": "2026-09-07T18:27:50.842347",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 10,
+            "totalTests": 10,
+            "executionTimeMs": 93.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.95,
+            "signals": [
+              "hashmap_usage",
+              "single_loop"
+            ],
+            "dataStructures": [
+              "hashmap"
+            ],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 1
+          }
+        },
+        {
+          "id": "127c100e-b42d-48ce-9aa0-e2bc7841704e",
+          "questionId": "two-sum",
+          "attemptNumber": 2,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n\n    for i, num in enumerate(nums):\n        complement = target - num\n\n        if complement in seen:\n            return [seen[complement], i]\n\n        seen[num] = i\n\n    return []",
+          "submittedAt": "2026-09-07T18:28:03.640498",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 10,
+            "totalTests": 10,
+            "executionTimeMs": 78.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.95,
+            "signals": [
+              "hashmap_usage",
+              "single_loop"
+            ],
+            "dataStructures": [
+              "hashmap"
+            ],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 1
+          }
+        }
+      ],
+      "finalPassRate": 1.0,
+      "firstPassRate": 1.0,
+      "bestPassRate": 1.0,
+      "totalAttempts": 2
+    },
+    {
+      "questionId": "number-of-islands",
+      "difficulty": 3,
+      "topics": [
+        "arrays",
+        "graphs",
+        "BFS",
+        "DFS"
+      ],
+      "skills": [
+        "graphs",
+        "recursion"
+      ],
+      "startedAt": "2026-09-07T18:28:08.881935",
+      "completedAt": "2026-09-07T18:28:44.658095",
+      "submissions": [
+        {
+          "id": "4dbb8788-06b1-4dcc-996c-668da4dd86e7",
+          "questionId": "number-of-islands",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def num_islands(grid: list[list[str]]) -> int:\n    rows = len(grid)\n    cols = len(grid[0])\n    islands = 0\n\n    def dfs(r, c):\n        # Out of bounds or water\n        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == \"0\":\n            return\n\n        # Mark as visited\n        grid[r][c] = \"0\"\n\n        # Explore 4 directions\n        dfs(r + 1, c)\n        dfs(r - 1, c)\n        dfs(r, c + 1)\n        dfs(r, c - 1)\n\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"1\":\n                islands += 1\n                dfs(r, c)\n\n    return islands",
+          "submittedAt": "2026-09-07T18:28:40.062734",
+          "isRun": true,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 2,
+            "totalTests": 2,
+            "executionTimeMs": 125.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": true,
+                "got": "1",
+                "expected": "1",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": true,
+                "got": "3",
+                "expected": "3",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "88da39fe-2b03-4cff-af60-94428a0fc2e5",
+          "questionId": "number-of-islands",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def num_islands(grid: list[list[str]]) -> int:\n    rows = len(grid)\n    cols = len(grid[0])\n    islands = 0\n\n    def dfs(r, c):\n        # Out of bounds or water\n        if r < 0 or r >= rows or c < 0 or c >= cols or grid[r][c] == \"0\":\n            return\n\n        # Mark as visited\n        grid[r][c] = \"0\"\n\n        # Explore 4 directions\n        dfs(r + 1, c)\n        dfs(r - 1, c)\n        dfs(r, c + 1)\n        dfs(r, c - 1)\n\n    for r in range(rows):\n        for c in range(cols):\n            if grid[r][c] == \"1\":\n                islands += 1\n                dfs(r, c)\n\n    return islands",
+          "submittedAt": "2026-09-07T18:28:42.524331",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 9,
+            "totalTests": 9,
+            "executionTimeMs": 109.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n^3)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.7,
+            "signals": [
+              "nested_loop",
+              "graph_traversal",
+              "recursive_call"
+            ],
+            "dataStructures": [],
+            "hasRecursion": true,
+            "functionCount": 2,
+            "loopDepth": 2
+          }
+        }
+      ],
+      "finalPassRate": 1.0,
+      "firstPassRate": 1.0,
+      "bestPassRate": 1.0,
+      "totalAttempts": 1
+    },
+    {
+      "questionId": "longest-substring",
+      "difficulty": 3,
+      "topics": [
+        "strings",
+        "hashmap",
+        "sliding-window"
+      ],
+      "skills": [
+        "hashmap",
+        "slidingWindow"
+      ],
+      "startedAt": "2026-09-07T18:28:44.965981",
+      "completedAt": "2026-09-07T18:29:21.108396",
+      "submissions": [
+        {
+          "id": "2ff52356-f4cf-42b7-9735-4ab6324d7533",
+          "questionId": "longest-substring",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def length_of_longest_substring(s: str) -> int:\n    seen = {}\n    left = 0\n    max_length = 0\n\n    for right in range(len(s)):\n        if s[right] in seen and seen[s[right]] >= left:\n            left = seen[s[right]] + 1\n\n        seen[s[right]] = right\n\n        max_length = max(max_length, right - left + 1)\n\n    return max_length",
+          "submittedAt": "2026-09-07T18:29:17.252060",
+          "isRun": true,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 3,
+            "totalTests": 3,
+            "executionTimeMs": 63.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": true,
+                "got": "3",
+                "expected": "3",
+                "error": null
+              },
+              {
+                "index": 1,
+                "passed": true,
+                "got": "1",
+                "expected": "1",
+                "error": null
+              },
+              {
+                "index": 2,
+                "passed": true,
+                "got": "3",
+                "expected": "3",
+                "error": null
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "889d71d3-92ee-418d-b44d-0ff8a3a6908b",
+          "questionId": "longest-substring",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def length_of_longest_substring(s: str) -> int:\n    seen = {}\n    left = 0\n    max_length = 0\n\n    for right in range(len(s)):\n        if s[right] in seen and seen[s[right]] >= left:\n            left = seen[s[right]] + 1\n\n        seen[s[right]] = right\n\n        max_length = max(max_length, right - left + 1)\n\n    return max_length",
+          "submittedAt": "2026-09-07T18:29:19.159786",
+          "isRun": false,
+          "executionResult": {
+            "status": "ACCEPTED",
+            "passedTests": 10,
+            "totalTests": 10,
+            "executionTimeMs": 94.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(n)",
+            "estimatedSpaceComplexity": "O(n)",
+            "confidence": 0.95,
+            "signals": [
+              "hashmap_usage",
+              "single_loop"
+            ],
+            "dataStructures": [
+              "hashmap"
+            ],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 1
+          }
+        }
+      ],
+      "finalPassRate": 1.0,
+      "firstPassRate": 1.0,
+      "bestPassRate": 1.0,
+      "totalAttempts": 1
+    },
+    {
+      "questionId": "longest-increasing-subsequence",
+      "difficulty": 3,
+      "topics": [
+        "dynamic-programming",
+        "binary-search"
+      ],
+      "skills": [
+        "dynamicProgramming",
+        "binarySearch"
+      ],
+      "startedAt": "2026-09-07T18:29:21.525434",
+      "completedAt": null,
+      "submissions": [],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 73.3,
+    "strings": 64.4,
+    "hashmaps": 77.2,
+    "slidingWindow": 64.4,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 60.5,
+    "graphs": 60.5,
+    "greedy": 50.0,
+    "recursion": 60.5,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 64.0,
+    "accuracy": 90.0,
+    "speed": 82.0,
+    "debugging": 85.0,
+    "edgeCaseHandling": 70.0,
+    "efficiency": 69.0
+  },
+  "reportGenerated": false
+}

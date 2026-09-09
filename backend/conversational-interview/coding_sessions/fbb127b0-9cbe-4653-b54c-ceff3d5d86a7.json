@@ -1,0 +1,140 @@
+{
+  "id": "fbb127b0-9cbe-4653-b54c-ceff3d5d86a7",
+  "createdAt": "2026-09-07T15:57:42.176775",
+  "updatedAt": "2026-09-07T16:00:03.054929",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T15:57:42.176775",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T15:57:42.183775",
+      "completedAt": null,
+      "submissions": [
+        {
+          "id": "e1ff57a6-96c8-4fa7-9381-e73ac916eaf8",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "javascript",
+          "code": "/**\n * @param {number[]} nums\n * @param {number} target\n * @return {number[]}\n */\nfunction twoSum(nums, target) {\n    \n}\n",
+          "submittedAt": "2026-09-07T15:59:36.198600",
+          "isRun": true,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 3,
+            "executionTimeMs": 94.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2
+            ],
+            "testDetails": [
+              {
+                "index": 0,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "_r is not iterable"
+              },
+              {
+                "index": 1,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "_r is not iterable"
+              },
+              {
+                "index": 2,
+                "passed": false,
+                "got": "",
+                "expected": "",
+                "error": "_r is not iterable"
+              }
+            ]
+          },
+          "codeAnalysis": null
+        },
+        {
+          "id": "173f912e-d595-4914-8f12-7f07817be0a3",
+          "questionId": "two-sum",
+          "attemptNumber": 1,
+          "language": "python",
+          "code": "def two_sum(nums: list[int], target: int) -> list[int]:\n    # Write your solution here\n    pass\n",
+          "submittedAt": "2026-09-07T16:00:03.053002",
+          "isRun": false,
+          "executionResult": {
+            "status": "WRONG_ANSWER",
+            "passedTests": 0,
+            "totalTests": 10,
+            "executionTimeMs": 94.0,
+            "memoryKb": 0.0,
+            "compileError": null,
+            "runtimeError": null,
+            "failedTestIndexes": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "testDetails": []
+          },
+          "codeAnalysis": {
+            "estimatedTimeComplexity": "O(1)",
+            "estimatedSpaceComplexity": "O(1)",
+            "confidence": 0.75,
+            "signals": [],
+            "dataStructures": [],
+            "hasRecursion": false,
+            "functionCount": 1,
+            "loopDepth": 0
+          }
+        }
+      ],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 1
+    }
+  ],
+  "skillProfile": {
+    "arrays": 42.0,
+    "strings": 50.0,
+    "hashmaps": 42.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 40.0,
+    "speed": 58.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 45.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

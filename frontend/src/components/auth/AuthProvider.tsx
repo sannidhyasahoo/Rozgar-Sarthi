@@ -28,27 +28,27 @@ const AuthContext = createContext<AuthContextType>({
 
 export function MockAuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfileState] = useState<CandidateProfile>(DEFAULT_PROFILE);
-  const [isSignedIn, setIsSignedIn] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState<{
     id: string;
     fullName: string;
     primaryEmailAddress: { emailAddress: string };
-  } | null>({
-    id: "user_dev_01",
-    fullName: "Alex Dev",
-    primaryEmailAddress: { emailAddress: "alex@developer.io" },
-  });
+  } | null>(null);
 
   useEffect(() => {
+    const isAuth = typeof window !== "undefined" && localStorage.getItem("rozgar_auth_active") === "true";
     const loaded = getStoredProfile();
     setProfileState(loaded);
-    if (loaded.name) {
+    if (isAuth) {
       setUser({
         id: "user_dev_01",
-        fullName: loaded.name,
+        fullName: loaded.name || "Alex Dev",
         primaryEmailAddress: { emailAddress: loaded.email || "alex@developer.io" },
       });
       setIsSignedIn(true);
+    } else {
+      setIsSignedIn(false);
+      setUser(null);
     }
   }, []);
 
@@ -58,6 +58,9 @@ export function MockAuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInMock = (name: string, email: string) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("rozgar_auth_active", "true");
+    }
     const res = saveStoredProfile({ name, email });
     setProfileState(res);
     setUser({
@@ -68,15 +71,14 @@ export function MockAuthProvider({ children }: { children: React.ReactNode }) {
     setIsSignedIn(true);
   };
 
-  const signOutMock = async () => {
+  const signOutMock = () => {
     if (typeof window !== "undefined") {
-      localStorage.removeItem("rozgar_profile");
-      // Also notify backend to delete mock profile and clear state
-      try {
-        await fetch("http://localhost:8000/api/reset", { method: "POST" });
-      } catch (e) {
-        console.error("Failed to reset backend state", e);
-      }
+      localStorage.removeItem("rozgar_auth_active");
+      localStorage.removeItem("rozgar_candidate_profile");
+      // Fire-and-forget backend reset in background without blocking UI navigation
+      fetch("http://localhost:8000/api/reset", { method: "POST" }).catch((e) => {
+        console.warn("Backend reset ping:", e);
+      });
     }
     setProfileState(DEFAULT_PROFILE);
     setIsSignedIn(false);

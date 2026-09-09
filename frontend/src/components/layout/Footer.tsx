@@ -8,8 +8,14 @@ import { Cpu, Terminal, Shield, GitFork, Activity } from "lucide-react";
 export function Footer() {
   const pathname = usePathname();
 
-  // Suppress footer on dashboard and full-screen assessment environments
-  if (pathname?.startsWith("/dashboard") || pathname?.startsWith("/coding/assessment")) {
+  // Suppress footer on workspace and assessment environments
+  if (
+    pathname?.startsWith("/dashboard") ||
+    pathname?.startsWith("/coding") ||
+    pathname?.startsWith("/report") ||
+    pathname?.startsWith("/onboarding") ||
+    pathname?.startsWith("/interview")
+  ) {
     return null;
   }
 

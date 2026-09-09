@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 export function useInterview() {
   const router = useRouter();
   const [isCallActive, setIsCallActive] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
   const [aiStatus, setAiStatus] = useState<'idle' | 'listening' | 'speaking' | 'error'>('idle');
   const [transcript, setTranscript] = useState<{ role: string; text: string }[]>([]);
   const [activeCallId, setActiveCallId] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export function useInterview() {
 
     const onCallStart = () => {
       console.log("[Vapi] Call started successfully");
+      setIsConnecting(false);
       setIsCallActive(true);
       setAiStatus('listening');
       setErrorMessage(null);
@@ -50,11 +52,11 @@ export function useInterview() {
     };
 
     const onError = (error: any) => {
-      // Vapi SDK fires error events with varying shapes — normalize it
       console.warn("[Vapi] Error event received:", JSON.stringify(error, null, 2));
       const msg = error?.error?.message || error?.message || "Connection failed. Please try again.";
       setErrorMessage(typeof msg === 'string' ? msg : JSON.stringify(msg));
       setAiStatus('error');
+      setIsConnecting(false);
     };
 
     vapi.on('call-start', onCallStart);
@@ -87,6 +89,7 @@ export function useInterview() {
       return;
     }
 
+    setIsConnecting(true);
     setTranscript([]);
     setErrorMessage(null);
     setAiStatus('idle');
@@ -123,6 +126,7 @@ export function useInterview() {
     } catch (err: any) {
       // Vapi SDK often rejects with `undefined` — the real error comes through the 'error' event
       console.warn("[Vapi] start() rejected:", err);
+      setIsConnecting(false);
       if (err !== undefined) {
         const msg = err?.message || err?.error?.message || "Failed to start call.";
         setErrorMessage(typeof msg === 'string' ? msg : JSON.stringify(msg));
@@ -139,6 +143,7 @@ export function useInterview() {
 
   return {
     isCallActive,
+    isConnecting,
     aiStatus,
     transcript,
     activeCallId,

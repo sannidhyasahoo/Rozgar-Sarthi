@@ -1,0 +1,51 @@
+{
+  "id": "151623e8-9abb-4e96-933b-9db4f5fc4330",
+  "createdAt": "2026-09-07T19:01:33.675793",
+  "updatedAt": "2026-09-07T19:01:33.677319",
+  "status": "active",
+  "totalQuestions": 7,
+  "currentQuestionIndex": 0,
+  "timeStarted": "2026-09-07T19:01:33.675793",
+  "timeLimitMinutes": 60,
+  "questions": [
+    {
+      "questionId": "two-sum",
+      "difficulty": 1,
+      "topics": [
+        "arrays",
+        "hashmap"
+      ],
+      "skills": [
+        "hashmap",
+        "arrays"
+      ],
+      "startedAt": "2026-09-07T19:01:33.677319",
+      "completedAt": null,
+      "submissions": [],
+      "finalPassRate": 0.0,
+      "firstPassRate": 0.0,
+      "bestPassRate": 0.0,
+      "totalAttempts": 0
+    }
+  ],
+  "skillProfile": {
+    "arrays": 50.0,
+    "strings": 50.0,
+    "hashmaps": 50.0,
+    "slidingWindow": 50.0,
+    "binarySearch": 50.0,
+    "stacks": 50.0,
+    "trees": 50.0,
+    "graphs": 50.0,
+    "greedy": 50.0,
+    "recursion": 50.0,
+    "dynamicProgramming": 50.0,
+    "complexityAnalysis": 50.0,
+    "accuracy": 50.0,
+    "speed": 50.0,
+    "debugging": 50.0,
+    "edgeCaseHandling": 50.0,
+    "efficiency": 50.0
+  },
+  "reportGenerated": false
+}

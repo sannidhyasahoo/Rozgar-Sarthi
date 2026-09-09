@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,6 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        dark: {
+          bg: "#08070c",
+          surface: "#0e0d14",
+          card: "#12111a",
+          cardHover: "#181622",
+          border: "#1f1c2b",
+          borderLight: "#2e2840",
+          muted: "#9e98b7",
+        },
         iris: "#6a5ed9",
         cobalt: "#3f71d4",
         coral: "#db5434",
@@ -21,16 +31,16 @@ const config: Config = {
         "mint-wash": "#dcfce7",
         "saffron-wash": "#fdc75c",
         zinc: {
-          50: "#fafafa",
-          100: "#f4f4f5",
-          200: "#e4e4e7",
-          300: "#d4d4d8",
-          400: "#a1a1aa",
-          500: "#71717a",
-          600: "#52525b",
-          700: "#3f3f46",
-          800: "#27272a",
-          900: "#18181b",
+          50: "var(--color-zinc-50, #fafafa)",
+          100: "var(--color-zinc-100, #f4f4f5)",
+          200: "var(--color-zinc-200, #e4e4e7)",
+          300: "var(--color-zinc-300, #d4d4d8)",
+          400: "var(--color-zinc-400, #a1a1aa)",
+          500: "var(--color-zinc-500, #71717a)",
+          600: "var(--color-zinc-600, #52525b)",
+          700: "var(--color-zinc-700, #3f3f46)",
+          800: "var(--color-zinc-800, #27272a)",
+          900: "var(--color-zinc-900, #18181b)",
         },
       },
       fontFamily: {
