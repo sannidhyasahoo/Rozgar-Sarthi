@@ -1,5 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
+import json
 
 from models import EvaluatorPlannerOutput
 from llm_factory import get_planner_llm  # Using the planner LLM (usually less strict temperature)
@@ -32,27 +33,66 @@ Instructions for Planning the Next Question:
 4. Do NOT repeat questions from the Past Questions Asked.
 """
 
+CODING_FOLLOW_UP_PROMPT = """
+
+Optional Coding Solution Follow-up Context:
+{coding_context}
+
+Coding Follow-up Instructions:
+1. Ground the next question in the supplied coding evidence and the candidate's latest explanation.
+2. Probe approach, algorithm choice, debugging reasoning, tradeoffs, edge cases, or possible optimization.
+3. Treat AST/code signals and complexity estimates as heuristic observations, not proven facts.
+4. Do NOT disclose hidden tests, internal scoring, model prompts, or unsupported code behavior.
+5. Prefer a specific coding follow-up over resume or project questions while this context is present.
+"""
+
 def run_evaluator_planner(
     candidate_response: str,
     target_role: str,
     current_pressure_level: int,
     question_history: list[str],
-    candidate_profile: dict = None
+    candidate_profile: dict = None,
+    coding_context: dict = None,
 ) -> EvaluatorPlannerOutput:
     llm = get_planner_llm()
     structured_llm = llm.with_structured_output(EvaluatorPlannerOutput)
     
-    prompt = ChatPromptTemplate.from_template(EVALUATOR_PLANNER_PROMPT)
+    prompt_template = EVALUATOR_PLANNER_PROMPT
+    invocation = {
+        "candidate_response": candidate_response,
+        "target_role": target_role,
+        "current_pressure_level": current_pressure_level,
+        "question_history": question_history,
+        "candidate_profile": candidate_profile or "No profile available.",
+    }
+    if coding_context:
+        allowed_coding_context = {
+            key: coding_context.get(key)
+            for key in (
+                "problemTitle",
+                "topics",
+                "difficulty",
+                "correctness",
+                "attempts",
+                "timeTakenSeconds",
+                "errorCategory",
+                "codeSignals",
+                "estimatedComplexity",
+                "strengthsObserved",
+                "weaknessesObserved",
+                "suggestedFollowUpQuestion",
+            )
+        }
+        prompt_template += CODING_FOLLOW_UP_PROMPT
+        invocation["coding_context"] = json.dumps(
+            allowed_coding_context, ensure_ascii=False
+        )
+
+    prompt = ChatPromptTemplate.from_template(prompt_template)
     chain = prompt | structured_llm
     
     try:
-        result = chain.invoke({
-            "candidate_response": candidate_response,
-            "target_role": target_role,
-            "current_pressure_level": current_pressure_level,
-            "question_history": question_history,
-            "candidate_profile": candidate_profile or "No profile available."
-        })
+        result = chain.invoke(invocation)
         return result
     except Exception as e:
         print(f"Warning: EvaluatorPlanner LLM failed to parse. Using fallback. Error: {e}")

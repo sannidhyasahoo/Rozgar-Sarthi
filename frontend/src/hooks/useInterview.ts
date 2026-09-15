@@ -1,6 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Vapi from '@vapi-ai/web';
 import { useRouter } from 'next/navigation';
+import type { CodingFollowUpContext } from '@/lib/codingApi';
+
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:8000";
+
+export interface CodingFollowUpOptions {
+  assessmentId: string;
+  context: CodingFollowUpContext;
+}
 
 export function useInterview() {
   const router = useRouter();
@@ -77,7 +85,10 @@ export function useInterview() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const startInterview = useCallback(async (profile?: any) => {
+  const startInterview = useCallback(async (
+    profile?: any,
+    codingFollowUp?: CodingFollowUpOptions
+  ) => {
     if (!vapiRef.current) {
       setErrorMessage("Vapi SDK not initialized. Check your NEXT_PUBLIC_VAPI_PUBLIC_KEY.");
       return;
@@ -94,8 +105,13 @@ export function useInterview() {
     setErrorMessage(null);
     setAiStatus('idle');
     
-    let assistantOverrides = {};
-    if (profile && profile.name) {
+    let assistantOverrides: { firstMessage?: string } = {};
+    if (codingFollowUp) {
+      assistantOverrides = {
+        firstMessage: codingFollowUp.context.suggestedFollowUpQuestion,
+      };
+      console.log("[Vapi] Starting optional coding solution follow-up");
+    } else if (profile && profile.name) {
       const firstName = profile.name.split(' ')[0];
       const targetRole = profile.targetRole || 'Backend Engineer';
       
@@ -120,8 +136,47 @@ export function useInterview() {
       const call = await vapiRef.current.start(assistantId, assistantOverrides);
       console.log("[Vapi] Call object returned:", call);
       if (call && call.id) {
+        if (codingFollowUp) {
+          try {
+            const registration = await fetch(`${BACKEND}/api/interview/coding-context`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                callId: call.id,
+                assessmentId: codingFollowUp.assessmentId,
+              }),
+            });
+            if (!registration.ok) {
+              const body = await registration.json().catch(() => null);
+              throw new Error(
+                body?.detail || `Coding context registration failed: ${registration.status}`
+              );
+            }
+          } catch (registrationError: any) {
+            console.error("[Vapi] Coding context registration failed:", registrationError);
+            vapiRef.current.stop();
+            activeCallIdRef.current = null;
+            setActiveCallId(null);
+            setIsCallActive(false);
+            setIsConnecting(false);
+            setAiStatus('error');
+            setErrorMessage(
+              registrationError?.message ||
+                "Could not attach coding evidence to this interview. Please retry."
+            );
+            return;
+          }
+        }
         setActiveCallId(call.id);
         activeCallIdRef.current = call.id;
+      } else if (codingFollowUp) {
+        vapiRef.current.stop();
+        setIsCallActive(false);
+        setIsConnecting(false);
+        setAiStatus('error');
+        setErrorMessage(
+          "The voice call started without a call ID, so coding context could not be attached."
+        );
       }
     } catch (err: any) {
       // Vapi SDK often rejects with `undefined` — the real error comes through the 'error' event

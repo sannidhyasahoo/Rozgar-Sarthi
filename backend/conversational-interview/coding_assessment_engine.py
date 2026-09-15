@@ -186,6 +186,7 @@ def select_next_question(
     all_problems: list[dict],
     time_remaining_seconds: float = 3600.0,
     prefer_difficulty: Optional[int] = None,
+    attempted_questions: Optional[list[AssessmentQuestion]] = None,
 ) -> Optional[dict]:
     """
     Deterministic adaptive question selector.
@@ -216,7 +217,7 @@ def select_next_question(
     best_score = -1.0
 
     for problem in feasible:
-        score = _score_question(problem, profile_dict, attempted_ids, time_remaining_seconds)
+        score = _score_question(problem, profile_dict, attempted_ids, time_remaining_seconds, attempted_questions or [])
         if score > best_score:
             best_score = score
             best_question = problem
@@ -229,6 +230,7 @@ def _score_question(
     profile: dict,
     attempted_ids: list[str],
     time_remaining: float,
+    attempted_questions: list[AssessmentQuestion],
 ) -> float:
     """
     Score a candidate question using the adaptive formula.
@@ -262,14 +264,12 @@ def _score_question(
     difficulty_fit = max(0.0, 1.0 - diff_distance / 4.0)
 
     # ── 3. Information Gain (0–1) ──────────────────────────────────────────────
-    # Prefer questions that cover under-tested skill areas
-    tested_skills = set()
-    for aid in attempted_ids:
-        pass  # Could track which skills already tested — simplified here
-
-    # Proxy: skills with 50.0 (initial value) = uncertain = high information gain
+    # Prefer skills that remain untested or whose evidence is inconclusive.
+    attempted_topics = [topic for q in attempted_questions for topic in q.topics]
+    tested_topics = set(attempted_topics)
+    untested_topic_ratio = sum(1 for topic in topics if topic not in tested_topics) / max(len(topics), 1)
     uncertain_skills = {s for s in relevant_skills if abs(profile.get(s, 50.0) - 50.0) < 15.0}
-    information_gain = len(uncertain_skills) / max(len(relevant_skills), 1)
+    information_gain = min(1.0, untested_topic_ratio * 0.6 + (len(uncertain_skills) / max(len(relevant_skills), 1)) * 0.4)
 
     # ── 4. Topic Coverage (0–1) ────────────────────────────────────────────────
     # Prefer broader topic coverage (more unique topics tested)
@@ -398,13 +398,25 @@ def compute_assessment_scores(assessment: CodingAssessment) -> dict:
 
     correctness_score = (sum(final_pass_rates) / len(final_pass_rates)) * 100 if final_pass_rates else 0
 
-    # Efficiency: ratio of expected vs estimated complexity
+    # Efficiency is deterministic evidence from timing and AST complexity. The
+    # profile remains a useful smoothing signal, but is no longer the only input.
     complexity_scores = []
+    time_scores = []
     for q_rec, sub in submit_results:
         if sub.codeAnalysis and sub.codeAnalysis.confidence > 0.5:
-            # Find problem def for expected complexity
-            pass  # simplified — use profile efficiency directly
-    efficiency_score = assessment.skillProfile.efficiency
+            expected = ""
+            # The API records expected complexity in the evidence/report; here
+            # use the analyzer confidence and observed structural quality.
+            complexity_scores.append(100.0 if sub.codeAnalysis.estimatedTimeComplexity not in ("Unknown", "O(n^3)") else 45.0)
+        if sub.timeTakenSeconds > 0:
+            # Question estimates are not stored on the session, so cap the
+            # per-submission contribution rather than inventing a benchmark.
+            time_scores.append(100.0 if sub.timeTakenSeconds <= 20 * 60 else 65.0)
+    evidence_efficiency = (
+        (sum(complexity_scores) / len(complexity_scores) if complexity_scores else assessment.skillProfile.efficiency) * 0.7
+        + (sum(time_scores) / len(time_scores) if time_scores else assessment.skillProfile.speed) * 0.3
+    )
+    efficiency_score = round((evidence_efficiency + assessment.skillProfile.efficiency) / 2, 1)
 
     # Debugging: penalize multiple attempts
     debugging_scores = []
@@ -471,6 +483,59 @@ def compute_assessment_scores(assessment: CodingAssessment) -> dict:
         "codeQuality": round(code_quality_score),
         "problemsSolved": solved,
         "totalAttempted": total_attempted,
+    }
+
+
+def build_recent_results(assessment: CodingAssessment) -> list[dict]:
+    """Return compact, evidence-only recent results for adaptive selection."""
+    results = []
+    for question in assessment.questions[-3:]:
+        submitted = [s for s in question.submissions if not s.isRun and s.executionResult]
+        if not submitted:
+            continue
+        latest = submitted[-1]
+        result = latest.executionResult
+        results.append({
+            "questionId": question.questionId,
+            "difficulty": question.difficulty,
+            "topics": question.topics,
+            "passRate": round(result.passedTests / max(result.totalTests, 1), 2),
+            "attempts": question.totalAttempts,
+            "errorCategory": latest.errorCategory,
+            "timeTakenSeconds": round(latest.timeTakenSeconds),
+            "complexity": latest.codeAnalysis.estimatedTimeComplexity if latest.codeAnalysis else "Unknown",
+        })
+    return results
+
+
+def decide_adaptation(assessment: CodingAssessment, next_problem: dict) -> dict:
+    """Explain a deterministic next-step decision without exposing scoring internals."""
+    recent = build_recent_results(assessment)
+    current = assessment.questions[-1] if assessment.questions else None
+    previous_difficulty = current.difficulty if current else next_problem.get("difficulty", 1)
+    next_difficulty = next_problem.get("difficulty", previous_difficulty)
+    latest = recent[-1] if recent else None
+
+    if next_difficulty > previous_difficulty:
+        decision = "increase_difficulty"
+        candidate_message = "You demonstrated solid progress. Your next challenge will explore a little more depth."
+    elif next_difficulty < previous_difficulty:
+        decision = "decrease_difficulty"
+        candidate_message = "Your next challenge will reinforce core problem-solving foundations before moving forward."
+    elif latest and latest.get("passRate", 0) < 0.6:
+        decision = "reinforce_weak_topic"
+        candidate_message = "We're adapting the next challenge to better understand and reinforce a recent skill area."
+    else:
+        decision = "explore_topic"
+        candidate_message = "We're adapting the assessment to broaden the evidence for your problem-solving strengths."
+
+    return {
+        "decision": decision,
+        "candidateMessage": candidate_message,
+        "previousDifficulty": previous_difficulty,
+        "nextDifficulty": next_difficulty,
+        "targetTopics": next_problem.get("topics", []),
+        "recentEvidence": recent,
     }
 
 

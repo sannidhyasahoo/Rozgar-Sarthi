@@ -24,12 +24,12 @@ export default async function AssessmentPage({ params }: Props) {
 
   if (!questionState?.question) {
     return (
-      <div className="min-h-screen bg-[#0f0f10] text-zinc-200 flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-6">
-          <AlertCircle className="w-8 h-8 text-amber-400" />
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0f0f10] text-zinc-800 dark:text-zinc-200 flex flex-col items-center justify-center p-6 text-center transition-colors duration-200">
+        <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 flex items-center justify-center mb-6">
+          <AlertCircle className="w-8 h-8 text-amber-600 dark:text-amber-400" />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-2">Assessment Session Not Found</h1>
-        <p className="text-zinc-400 text-sm max-w-md mb-8 leading-relaxed">
+        <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Assessment Session Not Found</h1>
+        <p className="text-zinc-600 dark:text-zinc-400 text-sm max-w-md mb-8 leading-relaxed">
           {errorMsg || "This assessment session may have expired, been completed, or the ID is invalid."}
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
@@ -42,7 +42,7 @@ export default async function AssessmentPage({ params }: Props) {
           </Link>
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#1a1a1e] hover:bg-[#2a2a2e] text-zinc-300 font-medium text-sm border border-[#2a2a2e] transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white hover:bg-zinc-100 dark:bg-[#1a1a1e] dark:hover:bg-[#2a2a2e] text-zinc-700 dark:text-zinc-300 font-medium text-sm border border-zinc-200 dark:border-[#2a2a2e] shadow-sm dark:shadow-none transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard

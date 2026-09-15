@@ -30,20 +30,20 @@ export default function ReportPage({ params }: Props) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0c] flex flex-col items-center justify-center gap-4 text-zinc-400">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0c] flex flex-col items-center justify-center gap-4 text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
         <Loader2 className="w-8 h-8 animate-spin text-[#6a5ed9]" />
         <p className="font-mono text-sm">Generating your assessment report…</p>
-        <p className="text-xs text-zinc-600">Analyzing performance across all submissions</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-600">Analyzing performance across all submissions</p>
       </div>
     );
   }
 
   if (error || !report) {
     return (
-      <div className="min-h-screen bg-[#0a0a0c] flex flex-col items-center justify-center gap-4 text-zinc-400">
-        <Code2 className="w-8 h-8 text-zinc-600" />
-        <p className="font-mono text-sm text-red-400">Failed to load report</p>
-        <p className="text-xs text-zinc-600">{error}</p>
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0a0a0c] flex flex-col items-center justify-center gap-4 px-6 text-center text-zinc-600 dark:text-zinc-400 transition-colors duration-200">
+        <Code2 className="w-8 h-8 text-zinc-400 dark:text-zinc-600" />
+        <p className="font-mono text-sm text-red-600 dark:text-red-400">Failed to load report</p>
+        <p className="text-xs text-zinc-500 dark:text-zinc-600">{error}</p>
         <button
           onClick={() => router.push("/coding")}
           className="mt-4 btn-primary-action px-6 py-2 text-sm"

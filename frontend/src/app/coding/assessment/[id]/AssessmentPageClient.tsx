@@ -26,12 +26,14 @@ import { AssessmentHeader } from "@/components/coding/AssessmentHeader";
 import { ProblemPanel } from "@/components/coding/ProblemPanel";
 import { TestResults } from "@/components/coding/TestResults";
 import { MarkdownView } from "@/components/shared/MarkdownView";
+import { useTheme } from "@/components/common/ThemeProvider";
 
 import {
   runCode,
   submitCode,
   nextQuestion,
   getHint,
+  getAdaptationStatus,
   LANGUAGE_LABELS,
   type CodingProblem,
   type ExecutionResult,
@@ -65,6 +67,7 @@ export default function AssessmentPageClient({
   initialSubmissions,
 }: AssessmentPageClientProps) {
   const router = useRouter();
+  const { theme } = useTheme();
 
   // ── Assessment State ───────────────────────────────────────────────────────
   const [question, setQuestion] = useState<CodingProblem>(initialQuestion);
@@ -88,7 +91,9 @@ export default function AssessmentPageClient({
   const [showSuccess, setShowSuccess] = useState(false);
   const [, setIsComplete] = useState(false);
 
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [adaptationMessage, setAdaptationMessage] = useState(
+    "We're adapting the assessment to better understand your problem-solving strengths."
+  );
 
   // ── OA Proctoring & Fullscreen Lockdown State ─────────────────────────────
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -104,27 +109,8 @@ export default function AssessmentPageClient({
   const editorRef = useRef<unknown>(null);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("coding_theme") as "dark" | "light" | null;
-      if (saved === "dark" || saved === "light") {
-        setTheme(saved);
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
-
-  const handleToggleTheme = useCallback(() => {
-    setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      try {
-        localStorage.setItem("coding_theme", next);
-      } catch {
-        // ignore
-      }
-      return next;
-    });
-  }, []);
+    getAdaptationStatus(assessmentId).then((data) => setAdaptationMessage(data.message)).catch(() => {});
+  }, [assessmentId]);
 
   // ── Timer ──────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -389,6 +375,7 @@ export default function AssessmentPageClient({
         setSubmissions([]);
         setShowSuccess(false);
         setLastSubmitResult(null);
+        if (res.adaptation?.message) setAdaptationMessage(res.adaptation.message);
       }
     } catch (err) {
       console.error("Next question failed:", err);
@@ -421,8 +408,6 @@ export default function AssessmentPageClient({
         totalQuestions={totalQuestions}
         timeRemainingSeconds={timeRemaining}
         status="active"
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
         onEndTest={() => setShowEndTestModal(true)}
         onRun={handleRun}
         onSubmit={handleSubmit}
@@ -451,6 +436,9 @@ export default function AssessmentPageClient({
 
         {/* Right: Code Editor + LeetCode Console Drawer */}
         <div className="flex-1 flex flex-col overflow-hidden">
+          <div className={`px-4 py-2 text-xs border-b ${isDark ? "bg-[#14131b] border-[#2e2e33] text-zinc-300" : "bg-indigo-50 border-indigo-100 text-indigo-800"}`}>
+            <span className="font-semibold">Adaptive assessment:</span> {adaptationMessage}
+          </div>
           {/* Editor Top Toolbar */}
           <div
             className={`border-b flex items-center justify-between px-4 py-2 shrink-0 select-none transition-colors duration-200 ${

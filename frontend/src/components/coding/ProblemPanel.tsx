@@ -199,6 +199,15 @@ export function ProblemPanel({
               )}
             </div>
 
+            <section className={`rounded-lg border p-3.5 space-y-1.5 ${isDark ? "bg-[#202024] border-[#2f2f35]" : "bg-zinc-50 border-zinc-200"}`}>
+              <h2 className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-zinc-300" : "text-zinc-700"}`}>
+                What you need to implement
+              </h2>
+              <p className={`text-xs leading-relaxed ${isDark ? "text-zinc-400" : "text-zinc-600"}`}>
+                Implement the requested function using the selected language template. Use the examples and constraints to guide your input handling and expected output.
+              </p>
+            </section>
+
             {/* Markdown Description */}
             <MarkdownView content={problem.description} isDark={isDark} />
 
@@ -263,7 +272,7 @@ export function ProblemPanel({
                     isDark ? "text-zinc-400" : "text-zinc-600"
                   }`}
                 >
-                  Constraints:
+                  Constraints & requirements
                 </h3>
                 <ul className="space-y-1.5">
                   {problem.constraints.map((c, i) => (

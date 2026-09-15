@@ -90,6 +90,10 @@ def _regex_analyze(code: str, language: str) -> CodeAnalysis:
     if re.search(r'\.append\(|\.push\(|stack', code):
         data_structures.append("stack")
         signals.append("stack_usage")
+    if re.search(r'\b(if|else if|elif)\b', code):
+        signals.append("branching")
+    if re.search(r'\b(return|throw|raise)\b', code):
+        signals.append("guard_or_exit")
 
     # Estimate complexity
     complexity, conf = _estimate_complexity(signals, has_recursion, loop_depth)
@@ -262,6 +266,11 @@ class TreeSitterAnalyzer:
 
         if re.search(r'\.left|\.right|root\.|node\.', full_code):
             signals.append("tree_traversal")
+
+        if re.search(r'\b(if|else if|elif)\b', full_code):
+            signals.append("branching")
+        if re.search(r'\b(return|throw|raise)\b', full_code):
+            signals.append("guard_or_exit")
 
         # ── Complexity estimation ──────────────────────────────────────────────
         complexity, confidence = _estimate_complexity(signals, has_recursion, loop_depth)

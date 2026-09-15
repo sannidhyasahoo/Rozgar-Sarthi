@@ -99,7 +99,7 @@ export function TestResults({
             }`}
           >
             <Terminal className="w-3.5 h-3.5 text-zinc-400" />
-            <span>Testcase</span>
+            <span>Visible examples</span>
           </button>
 
           {/* Test Result Tab */}
@@ -124,7 +124,7 @@ export function TestResults({
                   : "text-zinc-400"
               }`}
             />
-            <span>Test Result</span>
+            <span>Run results</span>
             {result && (
               <span
                 className={`w-2 h-2 rounded-full ${
@@ -154,6 +154,9 @@ export function TestResults({
         {/* TAB 1: TESTCASE VIEWER */}
         {activeTab === "testcase" && (
           <div className="space-y-4">
+            <p className={`text-xs ${isDark ? "text-zinc-400" : "text-zinc-600"}`}>
+              Run code to check these visible examples. Submit evaluates your solution more broadly without revealing hidden cases.
+            </p>
             {/* Case selector pills */}
             <div className="flex items-center gap-2 flex-wrap">
               {Array.from({ length: numCases }).map((_, idx) => (

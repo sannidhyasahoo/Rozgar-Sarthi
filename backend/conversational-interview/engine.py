@@ -1,4 +1,4 @@
-from typing import TypedDict, Annotated, List, Optional
+from typing import TypedDict, Annotated, List, Optional, NotRequired
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
@@ -17,6 +17,7 @@ class InterviewState(TypedDict):
     turn_count: int
     question_history: List[str]
     consecutive_evasions: int
+    coding_context: NotRequired[Optional[dict]]
 
 def process_turn_node(state: InterviewState) -> InterviewState:
     messages = state["messages"]
@@ -63,7 +64,8 @@ def process_turn_node(state: InterviewState) -> InterviewState:
         target_role=state["target_role"],
         current_pressure_level=state["current_pressure_level"],
         question_history=state.get("question_history", [])[-2:],
-        candidate_profile=profile_context
+        candidate_profile=profile_context,
+        coding_context=state.get("coding_context"),
     )
     
     # --- 1. Update Competency Vector ---

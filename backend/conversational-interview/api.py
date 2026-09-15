@@ -2,10 +2,12 @@ import asyncio
 import json
 import logging
 import os
+import time
 from fastapi import FastAPI, Request, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_core.messages import HumanMessage, AIMessage
+from pydantic import BaseModel
 
 from models import CompetencyVector, UserProfile
 from engine import create_interview_engine
@@ -13,6 +15,7 @@ from simulate_interview import print_telemetry
 from insight_logger import save_session_insights
 from resume_parser import extract_text_from_pdf, parse_resume_to_profile
 from coding_api import router as coding_router
+from coding_session_store import load_assessment
 from report_api import router as report_router
 
 # Set up logging for FastAPI to show our telemetry
@@ -36,6 +39,50 @@ engine = create_interview_engine()
 
 PROFILES_DIR = os.path.join(os.path.dirname(__file__), "profiles")
 os.makedirs(PROFILES_DIR, exist_ok=True)
+
+CODING_CONTEXT_TTL_SECONDS = 300
+pending_coding_contexts: dict[str, tuple[float, dict]] = {}
+
+
+class CodingContextRegistration(BaseModel):
+    callId: str
+    assessmentId: str
+
+
+def _remove_expired_coding_contexts() -> None:
+    now = time.monotonic()
+    expired = [
+        call_id
+        for call_id, (registered_at, _) in pending_coding_contexts.items()
+        if now - registered_at > CODING_CONTEXT_TTL_SECONDS
+    ]
+    for call_id in expired:
+        pending_coding_contexts.pop(call_id, None)
+
+
+@app.post("/api/interview/coding-context")
+async def register_coding_context(req: CodingContextRegistration):
+    call_id = req.callId.strip()
+    assessment_id = req.assessmentId.strip()
+    if not call_id or not assessment_id:
+        raise HTTPException(status_code=400, detail="callId and assessmentId are required")
+
+    assessment = load_assessment(assessment_id)
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Coding assessment not found")
+    if not assessment.latestFollowUpContext:
+        raise HTTPException(
+            status_code=404,
+            detail="No submitted coding evidence is available for follow-up",
+        )
+
+    _remove_expired_coding_contexts()
+    pending_coding_contexts[call_id] = (
+        time.monotonic(),
+        dict(assessment.latestFollowUpContext),
+    )
+    return {"status": "registered", "callId": call_id}
+
 
 @app.post("/api/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
@@ -98,6 +145,15 @@ async def chat_completions(request: Request):
         
         # If the state doesn't exist (new call), initialize the required fields
         if not current_state.values:
+            coding_context = None
+            pending_context = pending_coding_contexts.get(call_id)
+            if pending_context:
+                registered_at, registered_context = pending_context
+                if time.monotonic() - registered_at <= CODING_CONTEXT_TTL_SECONDS:
+                    coding_context = registered_context
+                else:
+                    pending_coding_contexts.pop(call_id, None)
+
             initial_state = {
                 "messages": langchain_messages,
                 "competency_state": CompetencyVector(),
@@ -110,6 +166,16 @@ async def chat_completions(request: Request):
                 "consecutive_evasions": 0,
                 "candidate_profile": None
             }
+
+            if coding_context:
+                suggested_question = coding_context.get("suggestedFollowUpQuestion")
+                initial_state["coding_context"] = coding_context
+                if suggested_question:
+                    initial_state["question_history"] = [suggested_question]
+                    if not any(isinstance(message, AIMessage) for message in langchain_messages):
+                        initial_state["messages"].insert(
+                            0, AIMessage(content=suggested_question)
+                        )
             
             # Try to load the mock candidate profile
             mock_user_id = "default-user"
@@ -120,22 +186,25 @@ async def chat_completions(request: Request):
                         profile_data = json.load(f)
                         initial_state["candidate_profile"] = UserProfile(**profile_data)
                         
-                        # Generate the identical dynamic greeting that the frontend used
-                        first_name = profile_data.get("name", "").split(" ")[0]
-                        target_role = initial_state["target_role"]
-                        
-                        context = "software engineering"
-                        if profile_data.get("experience") and len(profile_data["experience"]) > 0:
-                            context = profile_data["experience"][0].get("company", "software engineering")
-                        elif profile_data.get("projects") and len(profile_data["projects"]) > 0:
-                            context = profile_data["projects"][0]
+                        if not coding_context:
+                            # Generate the identical dynamic greeting that the frontend used
+                            first_name = profile_data.get("name", "").split(" ")[0]
+                            target_role = initial_state["target_role"]
                             
-                        dynamic_greeting = f"Hi {first_name}, I'm your interviewer for the {target_role} position. To start off, could you tell me about your {context} experience?"
-                        
-                        # Prepend the AI's first message to the history so LangGraph knows what it asked
-                        initial_state["messages"].insert(0, AIMessage(content=dynamic_greeting))
+                            context = "software engineering"
+                            if profile_data.get("experience") and len(profile_data["experience"]) > 0:
+                                context = profile_data["experience"][0].get("company", "software engineering")
+                            elif profile_data.get("projects") and len(profile_data["projects"]) > 0:
+                                context = profile_data["projects"][0]
+
+                            dynamic_greeting = f"Hi {first_name}, I'm your interviewer for the {target_role} position. To start off, could you tell me about your {context} experience?"
+
+                            # Prepend the AI's first message to the history so LangGraph knows what it asked
+                            initial_state["messages"].insert(0, AIMessage(content=dynamic_greeting))
                 except Exception as e:
                     logging.error(f"Failed to load candidate profile: {e}")
+            if coding_context:
+                pending_coding_contexts.pop(call_id, None)
             input_state = initial_state
         else:
             # We only need to provide the messages and let it run

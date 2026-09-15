@@ -43,6 +43,8 @@ from coding_assessment_engine import (
     ai_recommend_question,
     compute_assessment_scores,
     identify_strong_weak_areas,
+    build_recent_results,
+    decide_adaptation,
 )
 from llm_factory import get_planner_llm
 
@@ -111,6 +113,46 @@ def _question_start_time(q: AssessmentQuestion) -> float:
         return (datetime.utcnow() - started).total_seconds()
     except Exception:
         return 0.0
+
+
+def _error_category(result: ExecutionResult) -> Optional[str]:
+    if result.status in ("COMPILE_ERROR", "RUNTIME_ERROR", "TIME_LIMIT"):
+        return result.status.lower()
+    if result.status == "WRONG_ANSWER":
+        return "incorrect_output"
+    return None
+
+
+def _build_follow_up_context(problem: dict, question: AssessmentQuestion, submission: Submission) -> dict:
+    """Structured contract a future Vapi/LangGraph turn can consume directly."""
+    result = submission.executionResult
+    analysis = submission.codeAnalysis
+    pass_rate = result.passedTests / max(result.totalTests, 1) if result else 0
+    strengths, weaknesses = [], []
+    if pass_rate == 1:
+        strengths.append("Passed all evaluated test cases")
+    elif pass_rate > 0:
+        weaknesses.append("Solution passed only part of the evaluated cases")
+    if analysis:
+        strengths.extend([f"Used {item}" for item in analysis.dataStructures])
+        if analysis.estimatedTimeComplexity != "Unknown":
+            strengths.append(f"Static analysis estimated {analysis.estimatedTimeComplexity}")
+    if submission.errorCategory:
+        weaknesses.append(f"Observed {submission.errorCategory.replace('_', ' ')}")
+    suggested = (
+        "Can you explain why you chose this approach and how it handles the important edge cases?"
+        if pass_rate >= 0.8 else
+        "Walk me through your approach, where it broke down, and what you would change next."
+    )
+    return {
+        "problemId": problem["id"], "problemTitle": problem["title"], "topics": question.topics,
+        "difficulty": question.difficulty, "correctness": round(pass_rate, 2),
+        "attempts": question.totalAttempts, "timeTakenSeconds": round(submission.timeTakenSeconds),
+        "errorCategory": submission.errorCategory, "codeSignals": analysis.signals if analysis else [],
+        "estimatedComplexity": analysis.estimatedTimeComplexity if analysis else "Unknown",
+        "strengthsObserved": strengths, "weaknessesObserved": weaknesses,
+        "suggestedFollowUpQuestion": suggested,
+    }
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -305,6 +347,8 @@ def submit_code(assessment_id: str, req: SubmitCodeRequest):
         isRun=False,
         executionResult=result,
         codeAnalysis=analysis,
+        timeTakenSeconds=time_taken,
+        errorCategory=_error_category(result),
     )
     assessment = add_submission(assessment, req.questionId, sub)
 
@@ -319,6 +363,7 @@ def submit_code(assessment_id: str, req: SubmitCodeRequest):
         total_attempts_on_question=submit_count + 1,
     )
     assessment.skillProfile = updated_profile
+    assessment.latestFollowUpContext = _build_follow_up_context(problem, current_q, sub)
     save_assessment(assessment)
 
     # Strip hidden test details from response
@@ -376,10 +421,11 @@ async def advance_to_next_question(assessment_id: str):
 
     # ── Try AI recommendation ──────────────────────────────────────────────────
     available = [p for p in problems if p["id"] not in attempted_ids]
+    recent_results = build_recent_results(assessment)
     ai_question_id = await ai_recommend_question(
         profile=assessment.skillProfile,
         available_problems=available,
-        recent_results=[],
+        recent_results=recent_results,
         remaining_time_seconds=time_remaining,
         llm_factory=get_planner_llm,
     )
@@ -396,6 +442,7 @@ async def advance_to_next_question(assessment_id: str):
             attempted_ids=attempted_ids,
             all_problems=problems,
             time_remaining_seconds=time_remaining,
+            attempted_questions=assessment.questions,
         )
 
     if not next_problem:
@@ -411,7 +458,11 @@ async def advance_to_next_question(assessment_id: str):
         topics=next_problem["topics"],
         skills=next_problem["skills"],
     )
+    adaptation = decide_adaptation(assessment, next_problem)
+    new_q.adaptiveReason = adaptation["candidateMessage"]
     assessment.questions.append(new_q)
+    assessment.adaptationHistory.append(adaptation)
+    assessment.latestAdaptiveMessage = adaptation["candidateMessage"]
     save_assessment(assessment)
 
     return {
@@ -421,6 +472,7 @@ async def advance_to_next_question(assessment_id: str):
         "question": sanitize_problem(next_problem),
         "timeRemainingSeconds": time_remaining,
         "aiRecommended": ai_question_id is not None,
+        "adaptation": {"decision": adaptation["decision"], "message": adaptation["candidateMessage"]},
     }
 
 
@@ -429,6 +481,21 @@ def get_skill_profile(assessment_id: str):
     """Get the current candidate skill profile."""
     assessment = _get_assessment_or_404(assessment_id)
     return assessment.skillProfile.model_dump()
+
+
+@router.get("/assessments/{assessment_id}/adaptation")
+def get_adaptation_status(assessment_id: str):
+    assessment = _get_assessment_or_404(assessment_id)
+    return {"message": assessment.latestAdaptiveMessage, "history": assessment.adaptationHistory}
+
+
+@router.get("/assessments/{assessment_id}/follow-up-context")
+def get_follow_up_context(assessment_id: str):
+    """Read-only integration point for a future Vapi/LangGraph follow-up."""
+    assessment = _get_assessment_or_404(assessment_id)
+    if not assessment.latestFollowUpContext:
+        raise HTTPException(status_code=404, detail="No submitted coding evidence is available yet")
+    return assessment.latestFollowUpContext
 
 
 @router.get("/assessments/{assessment_id}/report")
@@ -526,6 +593,26 @@ Be honest about weaknesses.
 
     hidden_pass_pct = round((total_hidden_passed / max(total_hidden, 1)) * 100)
 
+    # Deterministic report foundation: evidence is calculated from persisted
+    # submissions rather than inferred by an LLM.
+    topic_performance: dict[str, list[float]] = {}
+    error_categories: dict[str, int] = {}
+    difficulty_progression = []
+    for q in assessment.questions:
+        submitted = [s for s in q.submissions if not s.isRun and s.executionResult]
+        if submitted:
+            latest = submitted[-1]
+            rate = latest.executionResult.passedTests / max(latest.executionResult.totalTests, 1)
+            for topic in q.topics:
+                topic_performance.setdefault(topic, []).append(rate)
+            if latest.errorCategory:
+                error_categories[latest.errorCategory] = error_categories.get(latest.errorCategory, 0) + 1
+        difficulty_progression.append({
+            "questionId": q.questionId, "difficulty": q.difficulty,
+            "attempts": q.totalAttempts, "finalPassRate": round(q.finalPassRate * 100),
+            "adaptiveReason": q.adaptiveReason,
+        })
+
     return {
         "assessmentId": assessment_id,
         "scores": scores,
@@ -540,6 +627,12 @@ Be honest about weaknesses.
             "elapsedSeconds": _elapsed_seconds(assessment),
         },
         "confidence": min(100, len(assessment.questions) * 14),
+        "analysis": {
+            "topicPerformance": {topic: round(sum(rates) / len(rates) * 100) for topic, rates in topic_performance.items()},
+            "difficultyProgression": difficulty_progression,
+            "errorCategories": error_categories,
+            "adaptationHistory": assessment.adaptationHistory,
+        },
     }
 
 

@@ -18,14 +18,13 @@ import {
   LogOut,
 } from "lucide-react";
 import { formatTime } from "@/lib/codingApi";
+import { useTheme } from "@/components/common/ThemeProvider";
 
 interface AssessmentHeaderProps {
   questionIndex: number;
   totalQuestions: number;
   timeRemainingSeconds: number;
   status: "active" | "completed";
-  theme: "dark" | "light";
-  onToggleTheme: () => void;
   onEndTest: () => void;
   onRun?: () => void;
   onSubmit?: () => void;
@@ -41,8 +40,6 @@ export function AssessmentHeader({
   questionIndex,
   totalQuestions,
   timeRemainingSeconds,
-  theme,
-  onToggleTheme,
   onEndTest,
   onRun,
   onSubmit,
@@ -54,6 +51,7 @@ export function AssessmentHeader({
   maxViolations = 3,
 }: AssessmentHeaderProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const isLow = timeRemainingSeconds < 300; // < 5 min
   const isCritical = timeRemainingSeconds < 120; // < 2 min
@@ -238,7 +236,7 @@ export function AssessmentHeader({
 
         {/* Theme Toggle Button */}
         <button
-          onClick={onToggleTheme}
+          onClick={toggleTheme}
           type="button"
           title={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
           className={`p-1.5 px-2 rounded-lg text-xs flex items-center gap-1.5 transition-all duration-200 border cursor-pointer ${

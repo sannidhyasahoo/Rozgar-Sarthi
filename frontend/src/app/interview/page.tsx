@@ -1,10 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import React, { Suspense, useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAppAuth } from "@/components/auth/AuthProvider";
 import { useInterview } from "@/hooks/useInterview";
+import {
+  getCodingFollowUpContext,
+  type CodingFollowUpContext,
+} from "@/lib/codingApi";
 import {
   Mic,
   MicOff,
@@ -31,8 +35,10 @@ import {
   Loader2,
 } from "lucide-react";
 
-export default function OnlineVideoInterviewPage() {
+function OnlineVideoInterviewPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const codingAssessmentId = searchParams.get("codingAssessmentId");
   const { profile } = useAppAuth();
   const {
     isCallActive,
@@ -43,6 +49,10 @@ export default function OnlineVideoInterviewPage() {
     startInterview,
     endInterview,
   } = useInterview();
+  const [codingFollowUpContext, setCodingFollowUpContext] =
+    useState<CodingFollowUpContext | null>(null);
+  const [isCodingContextLoading, setIsCodingContextLoading] = useState(false);
+  const [codingContextError, setCodingContextError] = useState<string | null>(null);
 
   // ── Meeting State & Controls ────────────────────────────────────────────────
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -55,6 +65,51 @@ export default function OnlineVideoInterviewPage() {
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const transcriptEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!codingAssessmentId) {
+      setCodingFollowUpContext(null);
+      setCodingContextError(null);
+      setIsCodingContextLoading(false);
+      return;
+    }
+
+    setIsCodingContextLoading(true);
+    setCodingContextError(null);
+    getCodingFollowUpContext(codingAssessmentId)
+      .then((context) => {
+        if (!cancelled) setCodingFollowUpContext(context);
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        setCodingFollowUpContext(null);
+        setCodingContextError(
+          error instanceof Error
+            ? error.message
+            : "Could not load coding follow-up context."
+        );
+      })
+      .finally(() => {
+        if (!cancelled) setIsCodingContextLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [codingAssessmentId]);
+
+  const handleStartInterview = () => {
+    if (codingAssessmentId) {
+      if (isCodingContextLoading || codingContextError || !codingFollowUpContext) return;
+      void startInterview(profile, {
+        assessmentId: codingAssessmentId,
+        context: codingFollowUpContext,
+      });
+      return;
+    }
+    void startInterview(profile);
+  };
 
   // ── Meeting Elapsed Timer ──────────────────────────────────────────────────
   useEffect(() => {
@@ -193,6 +248,11 @@ export default function OnlineVideoInterviewPage() {
                 <span className="hidden md:inline px-1.5 py-0.5 rounded text-[10px] font-mono bg-[#14121e] text-zinc-300 border border-[#1f1c2b]">
                   Round 01
                 </span>
+                {codingAssessmentId && (
+                  <span className="hidden sm:inline px-1.5 py-0.5 rounded text-[10px] font-mono bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                    Coding solution follow-up
+                  </span>
+                )}
               </div>
               <div className="text-[10px] font-mono text-zinc-400 truncate max-w-[200px] sm:max-w-xs">
                 {profile.targetRole || "Backend Engineer"} • Live Assessment
@@ -239,6 +299,22 @@ export default function OnlineVideoInterviewPage() {
           </button>
         </div>
       </header>
+
+      {codingAssessmentId && (isCodingContextLoading || codingContextError) && (
+        <div className="shrink-0 px-4 py-2 bg-[#0c0b12] border-b border-[#1f1c2b] text-center">
+          {isCodingContextLoading ? (
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-zinc-400">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />
+              Loading coding solution evidence…
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-2 text-xs font-mono text-red-300">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              {codingContextError}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* ── Main Interview Body: Video Grid + Side Drawer ───────────────────── */}
       <div className="flex-1 flex overflow-hidden relative">
@@ -488,7 +564,11 @@ export default function OnlineVideoInterviewPage() {
                   <span>{errorMessage}</span>
                 </div>
                 <button
-                  onClick={() => startInterview(profile)}
+                  onClick={handleStartInterview}
+                  disabled={
+                    isCodingContextLoading ||
+                    Boolean(codingAssessmentId && !codingFollowUpContext)
+                  }
                   className="px-3 py-1 bg-red-800 hover:bg-red-700 rounded-lg font-mono font-bold text-white transition-colors cursor-pointer"
                 >
                   Retry
@@ -623,8 +703,12 @@ export default function OnlineVideoInterviewPage() {
           {/* Main Join / Call Toggle Button if not started */}
           {!isCallActive ? (
             <button
-              onClick={() => startInterview(profile)}
-              disabled={isConnecting}
+              onClick={handleStartInterview}
+              disabled={
+                isConnecting ||
+                isCodingContextLoading ||
+                Boolean(codingAssessmentId && !codingFollowUpContext)
+              }
               className="flex items-center gap-2.5 px-6 py-3 rounded-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-mono text-sm font-bold shadow-lg shadow-emerald-950/40 border border-emerald-500/30 transition-all hover:scale-105 active:scale-95 cursor-pointer disabled:cursor-not-allowed"
             >
               {isConnecting ? (
@@ -728,5 +812,20 @@ export default function OnlineVideoInterviewPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function OnlineVideoInterviewPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-screen w-screen bg-[#08070c] text-zinc-400 flex items-center justify-center font-mono text-sm">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin text-indigo-400" />
+          Preparing interview room…
+        </div>
+      }
+    >
+      <OnlineVideoInterviewPageContent />
+    </Suspense>
   );
 }

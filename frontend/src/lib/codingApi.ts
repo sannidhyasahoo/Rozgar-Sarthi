@@ -74,6 +74,27 @@ export interface SubmitResult extends ExecutionResult {
   attemptNumber: number;
 }
 
+export interface AdaptationStatus {
+  message: string;
+  history: Array<{ decision: string; candidateMessage: string }>;
+}
+
+export interface CodingFollowUpContext {
+  problemId: string;
+  problemTitle: string;
+  topics: string[];
+  difficulty: number;
+  correctness: number;
+  attempts: number;
+  timeTakenSeconds: number;
+  errorCategory: string | null;
+  codeSignals: string[];
+  estimatedComplexity: string;
+  strengthsObserved: string[];
+  weaknessesObserved: string[];
+  suggestedFollowUpQuestion: string;
+}
+
 export interface AssessmentState {
   assessmentId: string;
   status: "active" | "completed";
@@ -111,6 +132,29 @@ export interface ReportScores {
   totalAttempted: number;
 }
 
+export interface ReportDifficultyProgression {
+  questionId: string;
+  difficulty: number;
+  attempts: number;
+  finalPassRate: number;
+  adaptiveReason: string | null;
+}
+
+export interface ReportAdaptationHistory {
+  decision: string;
+  candidateMessage: string;
+  previousDifficulty: number;
+  nextDifficulty: number;
+  targetTopics: string[];
+}
+
+export interface ReportAnalysis {
+  topicPerformance: Record<string, number>;
+  difficultyProgression: ReportDifficultyProgression[];
+  errorCategories: Record<string, number>;
+  adaptationHistory: ReportAdaptationHistory[];
+}
+
 export interface AssessmentReport {
   assessmentId: string;
   scores: ReportScores;
@@ -135,6 +179,7 @@ export interface AssessmentReport {
     elapsedSeconds: number;
   };
   confidence: number;
+  analysis: ReportAnalysis;
 }
 
 // ── API Functions ──────────────────────────────────────────────────────────────
@@ -192,6 +237,7 @@ export async function nextQuestion(assessmentId: string): Promise<{
   question?: CodingProblem;
   timeRemainingSeconds?: number;
   aiRecommended?: boolean;
+  adaptation?: { decision: string; message: string };
   assessmentId?: string;
 }> {
   const res = await fetch(`${BACKEND}/api/coding/assessments/${assessmentId}/next`, {
@@ -204,6 +250,22 @@ export async function nextQuestion(assessmentId: string): Promise<{
 export async function getSkillProfile(assessmentId: string): Promise<SkillProfile> {
   const res = await fetch(`${BACKEND}/api/coding/assessments/${assessmentId}/profile`);
   if (!res.ok) throw new Error(`Profile fetch failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getAdaptationStatus(assessmentId: string): Promise<AdaptationStatus> {
+  const res = await fetch(`${BACKEND}/api/coding/assessments/${assessmentId}/adaptation`);
+  if (!res.ok) throw new Error(`Adaptation status fetch failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getCodingFollowUpContext(
+  assessmentId: string
+): Promise<CodingFollowUpContext> {
+  const res = await fetch(
+    `${BACKEND}/api/coding/assessments/${encodeURIComponent(assessmentId)}/follow-up-context`
+  );
+  if (!res.ok) throw new Error(`Coding follow-up context fetch failed: ${res.status}`);
   return res.json();
 }
 

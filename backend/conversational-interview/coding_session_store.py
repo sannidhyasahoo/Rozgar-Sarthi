@@ -51,6 +51,8 @@ class Submission(BaseModel):
     isRun: bool = False   # True = "Run Code", False = "Submit"
     executionResult: Optional[ExecutionResult] = None
     codeAnalysis: Optional[CodeAnalysis] = None
+    timeTakenSeconds: float = 0.0
+    errorCategory: Optional[str] = None
 
 
 class AssessmentQuestion(BaseModel):
@@ -65,6 +67,7 @@ class AssessmentQuestion(BaseModel):
     firstPassRate: float = 0.0
     bestPassRate: float = 0.0
     totalAttempts: int = 0
+    adaptiveReason: Optional[str] = None
 
 
 class CandidateSkillProfile(BaseModel):
@@ -102,6 +105,9 @@ class CodingAssessment(BaseModel):
     questions: list[AssessmentQuestion] = Field(default_factory=list)
     skillProfile: CandidateSkillProfile = Field(default_factory=CandidateSkillProfile)
     reportGenerated: bool = False
+    adaptationHistory: list[dict] = Field(default_factory=list)
+    latestAdaptiveMessage: str = "We're adapting the assessment to better understand your problem-solving strengths."
+    latestFollowUpContext: Optional[dict] = None
 
 
 # ─── Storage Functions ────────────────────────────────────────────────────────
