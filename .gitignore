@@ -35,5 +35,7 @@ Thumbs.db
 
 # Project specific
 reports/
+coding_sessions/
 *.sqlite3
 *.db
+scratch/

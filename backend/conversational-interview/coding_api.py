@@ -45,6 +45,7 @@ from coding_assessment_engine import (
     identify_strong_weak_areas,
 )
 from llm_factory import get_planner_llm
+from telemetry_audit import audit_coding_execution, audit_coding_submission
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -241,6 +242,16 @@ def run_code(assessment_id: str, req: RunCodeRequest):
         )
         assessment = add_submission(assessment, req.questionId, sub)
 
+    # Audit execution to terminal
+    audit_coding_execution(
+        problem_id=req.questionId,
+        language=req.language,
+        passed_count=result.passedTests,
+        total_count=result.totalTests,
+        runtime_ms=result.executionTimeMs,
+        status=result.status
+    )
+
     return {
         "status": result.status,
         "passedTests": result.passedTests,
@@ -320,6 +331,21 @@ def submit_code(assessment_id: str, req: SubmitCodeRequest):
     )
     assessment.skillProfile = updated_profile
     save_assessment(assessment)
+
+    # Audit submission to terminal
+    pass_ratio = (result.passedTests / max(1, result.totalTests)) * 100.0
+    audit_coding_submission(
+        assessment_id=assessment_id,
+        problem_id=req.questionId,
+        score=pass_ratio,
+        metrics={
+            "language": req.language.upper(),
+            "tests_passed": f"{result.passedTests}/{result.totalTests}",
+            "execution_time": f"{result.executionTimeMs:.1f}ms",
+            "estimated_complexity": analysis.estimatedTimeComplexity or "N/A",
+            "recursion_detected": "Yes" if analysis.hasRecursion else "No"
+        }
+    )
 
     # Strip hidden test details from response
     visible_results = [d for d in result.testDetails if d.get("index", 999) < len(visible)]

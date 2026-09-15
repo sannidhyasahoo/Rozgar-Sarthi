@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import time
 from fastapi import FastAPI, Request, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,11 +10,11 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from models import CompetencyVector, UserProfile
 from engine import create_interview_engine
-from simulate_interview import print_telemetry
 from insight_logger import save_session_insights
 from resume_parser import extract_text_from_pdf, parse_resume_to_profile
 from coding_api import router as coding_router
 from report_api import router as report_router
+from telemetry_audit import audit_resume_upload, audit_langgraph_turn, audit_report_generated
 
 # Set up logging for FastAPI to show our telemetry
 logging.basicConfig(level=logging.INFO)
@@ -50,8 +51,12 @@ async def upload_resume(file: UploadFile = File(...)):
         with open(profile_path, "w", encoding="utf-8") as f:
             f.write(profile.model_dump_json(indent=2))
             
+        # Audit profile extraction to terminal
+        audit_resume_upload(file.filename or "uploaded_resume.pdf", profile.model_dump())
+            
         return {"status": "success", "profile": profile.model_dump()}
     except Exception as e:
+        logger.error(f"Error parsing resume: {e}")
         return {"status": "error", "message": str(e)}
 
 @app.post("/api/chat/completions")
@@ -77,6 +82,8 @@ async def chat_completions(request: Request):
     config = {"configurable": {"thread_id": call_id}}
 
     async def event_generator():
+        start_time = time.time()
+        
         # 1. Instantly yield filler to mask latency
         import random
         fillers = [
@@ -95,6 +102,7 @@ async def chat_completions(request: Request):
         
         # Check current state in memory
         current_state = engine.get_state(config)
+        prev_comp = current_state.values.get("competency_state") if current_state and current_state.values else None
         
         # If the state doesn't exist (new call), initialize the required fields
         if not current_state.values:
@@ -135,7 +143,7 @@ async def chat_completions(request: Request):
                         # Prepend the AI's first message to the history so LangGraph knows what it asked
                         initial_state["messages"].insert(0, AIMessage(content=dynamic_greeting))
                 except Exception as e:
-                    logging.error(f"Failed to load candidate profile: {e}")
+                    logger.error(f"Failed to load candidate profile: {e}")
             input_state = initial_state
         else:
             # We only need to provide the messages and let it run
@@ -143,9 +151,20 @@ async def chat_completions(request: Request):
             
         # 2. Run LangGraph Engine (Evaluation + Planning)
         result_state = await engine.ainvoke(input_state, config)
+        duration_ms = (time.time() - start_time) * 1000
         
-        # Print telemetry to terminal
-        print_telemetry(result_state)
+        # 3. Print comprehensive Rich Telemetry & Audit to Terminal
+        turn_num = result_state.get("turn_count", len(result_state.get("question_history", [])))
+        target_role = result_state.get("target_role", "Software Engineer")
+        audit_langgraph_turn(
+            turn_count=turn_num,
+            call_id=call_id,
+            target_role=target_role,
+            candidate_response=latest_msg or "(Greeting / Initial handshake)",
+            prev_comp_state=prev_comp,
+            result_state=result_state,
+            duration_ms=duration_ms
+        )
         
         # Extract the generated question from the latest AI message
         if result_state["messages"] and isinstance(result_state["messages"][-1], AIMessage):
@@ -166,16 +185,20 @@ async def chat_completions(request: Request):
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
-import os
-from fastapi import HTTPException
-
 @app.get("/api/report/{call_id}")
 async def get_report(call_id: str):
     file_path = os.path.join(os.path.dirname(__file__), "..", "reports", f"{call_id}_insights.json")
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="Report generating or not found")
     with open(file_path, "r") as f:
-        return json.load(f)
+        data = json.load(f)
+        audit_report_generated(call_id, {
+            "verdict": data.get("readiness_verdict", "Complete"),
+            "overall_score": f"{data.get('overall_score', 80)}/100",
+            "strengths_count": len(data.get("strengths", [])),
+            "growth_areas_count": len(data.get("growth_areas", []))
+        })
+        return data
 
 @app.post("/api/reset")
 async def reset_session():
@@ -186,8 +209,6 @@ async def reset_session():
         try:
             os.remove(profile_path)
         except Exception as e:
-            logging.error(f"Failed to delete profile: {e}")
+            logger.error(f"Failed to delete profile: {e}")
             
-    # Also delete any cached telemetry/state if needed
-    # For now, memory state is per call_id, so refreshing the frontend handles it.
     return {"status": "success", "message": "Session and data cleared"}

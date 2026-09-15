@@ -16,7 +16,9 @@ export function useInterview() {
 
   useEffect(() => {
     if (!vapiRef.current) {
-      const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || "";
+      const rawKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || "";
+      const publicKey = rawKey.replace(/^["']|["']$/g, '').trim();
+      
       if (!publicKey) {
         console.error("[Vapi] NEXT_PUBLIC_VAPI_PUBLIC_KEY is not set!");
         return;
@@ -53,7 +55,12 @@ export function useInterview() {
 
     const onError = (error: any) => {
       console.warn("[Vapi] Error event received:", JSON.stringify(error, null, 2));
-      const msg = error?.error?.message || error?.message || "Connection failed. Please try again.";
+      let msg = error?.error?.message || error?.message || (typeof error === 'string' ? error : "Connection failed. Please try again.");
+      
+      if (typeof msg === 'string' && msg.includes("Does Not Exist")) {
+        msg = "The configured Vapi Assistant ID was not found in your Vapi account. Please create an assistant on dashboard.vapi.ai and update NEXT_PUBLIC_VAPI_ASSISTANT_ID in frontend/.env.";
+      }
+      
       setErrorMessage(typeof msg === 'string' ? msg : JSON.stringify(msg));
       setAiStatus('error');
       setIsConnecting(false);
@@ -83,55 +90,72 @@ export function useInterview() {
       return;
     }
     
-    const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID || "";
-    if (!assistantId) {
-      setErrorMessage("NEXT_PUBLIC_VAPI_ASSISTANT_ID is not set.");
-      return;
-    }
+    const rawAssistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID || "";
+    const assistantId = rawAssistantId.replace(/^["']|["']$/g, '').trim();
 
     setIsConnecting(true);
     setTranscript([]);
     setErrorMessage(null);
     setAiStatus('idle');
     
-    let assistantOverrides = {};
-    if (profile && profile.name) {
-      const firstName = profile.name.split(' ')[0];
-      const targetRole = profile.targetRole || 'Backend Engineer';
-      
-      let context = 'software engineering';
-      if (profile.experience && profile.experience.length > 0) {
-        context = profile.experience[0].company;
-      } else if (profile.projects && profile.projects.length > 0) {
-        context = profile.projects[0];
-      }
-      
-      const dynamicGreeting = `Hi ${firstName}, I'm your interviewer for the ${targetRole} position. To start off, could you tell me about your ${context} experience?`;
-      assistantOverrides = {
-        firstMessage: dynamicGreeting
-      };
-      console.log("[Vapi] Using dynamic greeting:", dynamicGreeting);
+    const firstName = profile?.name ? profile.name.split(' ')[0] : 'Candidate';
+    const targetRole = profile?.targetRole || 'Software Engineer';
+    
+    let context = 'software engineering';
+    if (profile?.experience && profile.experience.length > 0) {
+      context = profile.experience[0].company || profile.experience[0].role || 'software engineering';
+    } else if (profile?.projects && profile.projects.length > 0) {
+      context = profile.projects[0];
     }
     
-    console.log("[Vapi] Starting call with assistant:", assistantId);
+    const dynamicGreeting = `Hi ${firstName}, I'm your interviewer for the ${targetRole} position. To start off, could you tell me about your ${context} experience?`;
+
+    console.log("[Vapi] Starting call with assistant:", assistantId || "inline-config");
 
     try {
-      // The Vapi SDK can reject with `undefined` — we must handle that gracefully
-      const call = await vapiRef.current.start(assistantId, assistantOverrides);
+      let call: any;
+      if (assistantId && assistantId !== "777d274b-28d4-4556-8ceb-ba38cd2e43d8") {
+        call = await vapiRef.current.start(assistantId, {
+          firstMessage: dynamicGreeting
+        });
+      } else {
+        // Fallback: Start with dynamic inline assistant using the active Vapi Public Key
+        console.log("[Vapi] Using dynamic inline assistant configuration");
+        call = await vapiRef.current.start({
+          name: "Rozgar Sarthi Technical Interviewer",
+          firstMessage: dynamicGreeting,
+          model: {
+            provider: "openai",
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: `You are an encouraging and insightful technical interviewer for Rozgar Sarthi assessing a candidate for a ${targetRole} role. Ask one question at a time, listen carefully to candidate answers, and ask relevant follow-ups.`
+              }
+            ]
+          },
+          voice: {
+            provider: "11labs",
+            voiceId: "21m00Tcm4TlvDq8ikWAM"
+          }
+        });
+      }
+
       console.log("[Vapi] Call object returned:", call);
       if (call && call.id) {
         setActiveCallId(call.id);
         activeCallIdRef.current = call.id;
       }
     } catch (err: any) {
-      // Vapi SDK often rejects with `undefined` — the real error comes through the 'error' event
       console.warn("[Vapi] start() rejected:", err);
       setIsConnecting(false);
       if (err !== undefined) {
-        const msg = err?.message || err?.error?.message || "Failed to start call.";
+        let msg = err?.message || err?.error?.message || "Failed to start call.";
+        if (typeof msg === 'string' && msg.includes("Does Not Exist")) {
+          msg = "The configured Assistant ID does not exist in your Vapi account. Please create an assistant on dashboard.vapi.ai and update your frontend/.env file.";
+        }
         setErrorMessage(typeof msg === 'string' ? msg : JSON.stringify(msg));
       }
-      // Don't re-throw — this prevents the Next.js Unhandled Error overlay
     }
   }, []);
 
